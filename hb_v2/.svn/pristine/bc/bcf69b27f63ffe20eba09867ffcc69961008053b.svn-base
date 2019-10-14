@@ -1,0 +1,95 @@
+{
+  "_from": "egg-redis",
+  "_id": "egg-redis@2.3.0",
+  "_inBundle": false,
+  "_integrity": "sha1-wcCaLV9CPql97+TvkNIHte/370w=",
+  "_location": "/egg-redis",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "egg-redis",
+    "name": "egg-redis",
+    "escapedName": "egg-redis",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "http://registry.npm.taobao.org/egg-redis/download/egg-redis-2.3.0.tgz",
+  "_shasum": "c1c09a2d5f423ea97defe4ef90d207b5eff7ef4c",
+  "_spec": "egg-redis",
+  "_where": "/Users/akka/lb/hb",
+  "author": {
+    "name": "jtyjty99999"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "bundleDependencies": false,
+  "ci": {
+    "type": "travis",
+    "version": "8, 10, 11",
+    "license": true,
+    "services": "redis-server"
+  },
+  "dependencies": {
+    "@types/ioredis": "^4.0.1",
+    "ioredis": "^3.2.2"
+  },
+  "deprecated": false,
+  "description": "Redis plugin for egg",
+  "devDependencies": {
+    "@types/node": "^10.9.4",
+    "autod": "^3.0.1",
+    "egg": "^2.3.0",
+    "egg-bin": "^4.4.0",
+    "egg-ci": "^1.8.0",
+    "egg-mock": "^3.14.0",
+    "eslint": "^4.18.1",
+    "eslint-config-egg": "^7.0.0",
+    "supertest": "^3.0.0",
+    "typescript": "^3.0.3",
+    "utility": "^1.9.0"
+  },
+  "eggPlugin": {
+    "name": "redis"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "files": [
+    "index.d.ts",
+    "app.js",
+    "agent.js",
+    "lib",
+    "config"
+  ],
+  "homepage": "https://github.com/eggjs/egg-redis#readme",
+  "keywords": [
+    "egg",
+    "eggPlugin",
+    "egg-plugin",
+    "redis",
+    "database"
+  ],
+  "license": "MIT",
+  "name": "egg-redis",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg-redis.git"
+  },
+  "scripts": {
+    "autod": "autod",
+    "ci": "npm run lint && npm run cov",
+    "cov": "egg-bin cov",
+    "lint": "eslint .",
+    "test": "npm run lint -- --fix && npm run test-local",
+    "test-local": "egg-bin test"
+  },
+  "types": "./index.d.ts",
+  "version": "2.3.0"
+}

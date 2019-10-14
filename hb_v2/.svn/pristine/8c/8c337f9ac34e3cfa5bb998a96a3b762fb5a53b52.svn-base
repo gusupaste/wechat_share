@@ -1,0 +1,13 @@
+// This file is created by egg-ts-helper
+// Do not modify this file!!!!!!!!!
+
+import 'egg';
+import ExportCheckUrl = require('../../../app/service/checkUrl');
+import ExportUrl = require('../../../app/service/url');
+
+declare module 'egg' {
+  interface IService {
+    checkUrl: ExportCheckUrl;
+    url: ExportUrl;
+  }
+}

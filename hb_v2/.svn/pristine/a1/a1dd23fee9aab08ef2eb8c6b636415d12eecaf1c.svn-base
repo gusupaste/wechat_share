@@ -1,0 +1,17 @@
+// This file is created by egg-ts-helper
+// Do not modify this file!!!!!!!!!
+
+import 'egg';
+import ExportDisplay = require('../../../app/controller/display');
+import ExportJump = require('../../../app/controller/jump');
+import ExportShare = require('../../../app/controller/share');
+import ExportUrl = require('../../../app/controller/url');
+
+declare module 'egg' {
+  interface IController {
+    display: ExportDisplay;
+    jump: ExportJump;
+    share: ExportShare;
+    url: ExportUrl;
+  }
+}
